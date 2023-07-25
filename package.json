@@ -5,10 +5,10 @@
     "node": ">=20.5.0"
   },
   "description": "",
-  "main": "server.ts",
+  "main": "server.mjs",
   "scripts": {
-    "start": "node server.ts",
-    "devStart": "nodemon server.ts"
+    "start": "node server.mjs",
+    "devStart": "nodemon server.mjs"
   },
   "keywords": [],
   "author": "",
