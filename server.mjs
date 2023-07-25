@@ -1,12 +1,12 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
-import express, { Express } from 'express';
-import router from './routes/index';
+import express from 'express';
+import router from './routes/index.mjs';
 
 dotenv.config();
 
 
-const app: Express = express()
+const app = express()
 
 app.use(cors({
     origin: '*'

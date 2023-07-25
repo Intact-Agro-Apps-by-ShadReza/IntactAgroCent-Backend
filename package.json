@@ -2,10 +2,10 @@
   "name": "intact-agro-cent-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "server.ts",
+  "main": "server.mjs",
   "scripts": {
-    "start": "node server.ts",
-    "devStart": "nodemon server.ts"
+    "start": "node server.mjs",
+    "devStart": "nodemon server.mjs"
   },
   "keywords": [],
   "author": "",
