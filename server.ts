@@ -12,6 +12,7 @@ app.use(cors({
     origin: '*'
 }));
 
+
 app.use('/', router)
 
 app.listen(process.env.PORT || 3000)
