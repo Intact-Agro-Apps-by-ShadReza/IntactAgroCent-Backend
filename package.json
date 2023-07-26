@@ -6,9 +6,6 @@
   },
   "description": "",
   "main": "server.js",
-  "engines": {
-    "node": ">=20.5.0"
-  },
   "scripts": {
     "start": "node server.js",
     "devStart": "nodemon server.js"
