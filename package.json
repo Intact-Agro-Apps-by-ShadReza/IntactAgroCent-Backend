@@ -5,13 +5,13 @@
     "node": ">=20.5.0"
   },
   "description": "",
-  "main": "server.js",
+  "main": "server.ts",
   "engines": {
     "node": ">=20.5.0"
   },
   "scripts": {
-    "start": "node server.js",
-    "devStart": "nodemon server.js"
+    "start": "node server.ts",
+    "devStart": "nodemon server.ts"
   },
   "keywords": [],
   "author": "",
