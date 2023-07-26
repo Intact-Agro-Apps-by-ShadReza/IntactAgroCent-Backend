@@ -1,8 +1,8 @@
-const { Router } = require('express')
+import { Router } from 'express'
 
 const router = Router()
 
-const { PrismaClient } = require('@prisma/client')
+import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 const getUsersData = async () => {
@@ -34,4 +34,4 @@ router.get('/', (req, res) => {
 // })
 
 
-module.exports = router
+export default router
