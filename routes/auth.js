@@ -14,10 +14,4 @@ authRouter.post('/login', (req, res) => {
     res.send({"code": 1000})
 })
 
-// authRouter.get('/', async (req, res) => {
-//     const users = await prisma.user.findMany()
-//     res.json(users)
-// })
-
-
 module.exports = authRouter
