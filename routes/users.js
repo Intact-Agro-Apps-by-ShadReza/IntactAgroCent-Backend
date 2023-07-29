@@ -1,6 +1,6 @@
 const { Router } = require('express')
 
-const router = Router()
+const userRouter = Router()
 
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
@@ -10,7 +10,7 @@ const getUsersData = async () => {
     return users
 }
 
-router.get('/users', async (req, res) => {
+userRouter.get('/', async (req, res) => {
     await getUsersData()
         .then(async (data) => {
         res.send(data)
@@ -24,14 +24,10 @@ router.get('/users', async (req, res) => {
     })
 })
 
-router.get('/', (req, res) => {
-    res.send("Assalamu Alaikum")
-})
-
-// router.get('/', async (req, res) => {
+// userRouter.get('/', async (req, res) => {
 //     const users = await prisma.user.findMany()
 //     res.json(users)
 // })
 
 
-module.exports = router
+module.exports = userRouter
