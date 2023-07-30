@@ -13,21 +13,16 @@ const getUsersData = async () => {
 userRouter.get('/', async (req, res) => {
     await getUsersData()
         .then(async (data) => {
-        res.send(data)
-        await prisma.$disconnect()
-    })
-    .catch(async (e) => {
-        res.sendStatus(500)
-        console.error(e)
-        await prisma.$disconnect()
-        process.exit(1)
-    })
+            res.send(data)
+            await prisma.$disconnect()
+        })
+        .catch(async (e) => {
+            res.sendStatus(500)
+            console.error(e)
+            await prisma.$disconnect()
+            process.exit(1)
+        })
 })
-
-// userRouter.get('/', async (req, res) => {
-//     const users = await prisma.user.findMany()
-//     res.json(users)
-// })
 
 
 module.exports = userRouter
