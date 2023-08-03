@@ -14,9 +14,33 @@ authRouter.get('/', (req, res) => {
     res.send({name: "Assalamu Alaikum from Auth Router"})
 })
 
-authRouter.post('/login', (req, res) => {
-    console.log(req.body)
-    res.send({"code": 1000})
+authRouter.post('/login', async (req, res) => {
+    const { email, password } = req.body
+
+    if (!(email && password)) {
+        res.statusMessage = "Provide Email & Password !"
+        return res.status(400).end();
+    }
+
+    try {
+        const foundTheSameEmail = await prisma.registeredMail.findFirst({
+            where: {
+                email: email
+            }
+        })
+
+        if (foundTheSameEmail && foundTheSameEmail.email === email && foundTheSameEmail.emailVerified && (await Encrypt.comparePassword(password, foundTheSameEmail.password))) {
+            res.statusMessage = "Login Successful"
+            return res.status(200).end();
+        } else {
+            res.statusMessage = "Invalid Credentials"
+            return res.status(403).end();
+        }
+    } catch (error) {
+        console.log('Login Error')
+        res.statusMessage = "Network Issue. Please Try Again sometimes later."
+        return res.status(500).end();
+    }
 })
 
 authRouter.post('/resendVerificationCode', async (req, res) => {
