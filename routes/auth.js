@@ -58,12 +58,19 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
             }
         })
 
+        if (foundTheEmail && foundTheEmail.emailVerified) {
+            console.log('Email already verified')
+            res.statusMessage = "Your Email is already verified."
+            return res.status(400).end();
+        }
+
         if (foundTheEmail) {
             const verificationCodeOfMail = await prisma.mailVerificationCode.findFirst({
                 where: {
                     emailId: foundTheEmail.id
                 }
             })
+
             let config = {
                 service: 'gmail',
                 auth: {
