@@ -2,13 +2,9 @@ const { Router } = require('express')
 const nodemailer = require('nodemailer');
 const Mailgen = require('mailgen')
 const authRouter = Router()
-
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
-const textflow = require("textflow.js");
 const Encrypt = require('../encryption');
-const { error } = require('console');
-textflow.useKey("KRK7Fkk2tpTNgCbZtCh43DJtVOyhOEomYtUT270kradNbvyg4woMHmgqQWoGLv7L");
 
 authRouter.get('/', (req, res) => {
     res.send({name: "Assalamu Alaikum from Auth Router"})
