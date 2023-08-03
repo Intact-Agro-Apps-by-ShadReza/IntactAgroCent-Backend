@@ -6,7 +6,8 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 const getUsersData = async () => {
-    const users = await prisma.user.findMany()
+    const users = []
+    // const users = await prisma.user.findMany()
     return users
 }
 

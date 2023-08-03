@@ -10,7 +10,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  name  String
+model RegisteredMail {
+  id               String                @id @unique @default(uuid())
+  email            String                @unique
+  password         String
+  emailVerified    Boolean
+  creationTime     DateTime              @default(now())
+  mailVerification MailVerificationCode?
+}
+
+model MailVerificationCode {
+  id                      String         @id @unique @default(uuid())
+  verificationCode        String
+  expirationTimeInMinutes Int
+  expiredAt               DateTime
+  emailId                 String         @unique
+  registeredMail          RegisteredMail @relation(fields: [emailId], references: [id])
+  creationTime            DateTime       @default(now())
 }
