@@ -25,11 +25,28 @@ authRouter.post('/login', async (req, res) => {
             }
         })
 
-        if (foundTheSameEmail && foundTheSameEmail.email === email && foundTheSameEmail.emailVerified && (await Encrypt.comparePassword(password, foundTheSameEmail.password))) {
-            res.statusMessage = "Login Successful"
-            return res.status(200).end();
+        if (foundTheSameEmail) {
+            if (foundTheSameEmail.email === email) {
+                if (foundTheSameEmail.emailVerified) {
+                    if ((await Encrypt.comparePassword(password, foundTheSameEmail.password))) {
+                        res.statusMessage = "Login Successful"
+                        return res.status(200).end();
+                    } else {
+                        res.statusMessage = "Invalid Credentials"
+                        return res.status(403).end();
+                    }
+                } else {
+                    res.statusMessage = "Email not verified yet. An OTP has been sent to your email."
+                    return res.status(401).end();
+                }
+            } else {
+                console.log('invalid creds')
+                res.statusMessage = "Invalid Credentials"
+                return res.status(403).end();
+            }
         } else {
-            res.statusMessage = "Invalid Credentials"
+            console.log('Not Registered')
+            res.statusMessage = "You are not registered. Please register first"
             return res.status(403).end();
         }
     } catch (error) {
@@ -61,11 +78,6 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
         }
 
         if (foundTheEmail) {
-            const verificationCodeOfMail = await prisma.mailVerificationCode.findFirst({
-                where: {
-                    emailId: foundTheEmail.id
-                }
-            })
 
             let config = {
                 service: 'gmail',
@@ -95,7 +107,7 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
 
             if (verificationCodeForMail) {
                 const currentTime = new Date()
-                if (currentTime >= verificationCodeForMail.expiredAt) {
+                if (currentTime <= verificationCodeForMail.expiredAt) {
                     res.statusMessage = "A verification code is already sitting in your mail. Please verify first.";
                     return res.status(201).end();
                 } else {
@@ -178,6 +190,12 @@ authRouter.post('/verifyMail', async (req, res) => {
                 email: email
             }
         })
+
+        if (foundTheEmail && foundTheEmail.emailVerified) {
+            console.log('Verification already done')
+            res.statusMessage = "Mail already verified"
+            return res.status(200).end();
+        }
 
         if (foundTheEmail) {
             const verificationCodeOfMail = await prisma.mailVerificationCode.findFirst({
