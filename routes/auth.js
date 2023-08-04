@@ -10,6 +10,121 @@ authRouter.get('/', (req, res) => {
     res.send({name: "Assalamu Alaikum from Auth Router"})
 })
 
+authRouter.post('/forgotPassword', async (req, res) => {
+    const { email } = req.body
+    if (!(email)) {
+        res.statusMessage = "Provide a valid Email!"
+        return res.status(400).end();
+    }
+
+    try {
+        const foundTheEmail = await prisma.registeredMail.findFirst({
+            where: {
+                email: email
+            }
+        })
+
+        if (foundTheEmail) {
+            if (foundTheEmail.emailVerified) {
+                let config = {
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.MAIL_OF_SENDER_CONFIGURED,
+                        pass: process.env.PASSWORD_OF_SENDER_MAIL_CONFIGURED
+                    }
+                }
+
+                let MailGenerator = new Mailgen({
+                    theme: 'default',
+                    product: {
+                        name: 'Mailgen',
+                        link: 'https://mailgen.js/'
+                    }
+                })
+
+                const generatedOTP = Math.random().toString().substr(2, 6)
+
+                const verificationCodeForMail = await prisma.mailVerificationCode.findFirst({
+                    where: {
+                        emailId: foundTheEmail.id
+                    }
+                })
+
+                const codeTTLInMinutes = 10
+                const currentTime = new Date()
+
+                if (verificationCodeForMail) {
+                    if (currentTime <= verificationCodeForMail.expiredAt) {
+                        res.statusMessage = "A verification code is already sitting in your mail. Please verify first.";
+                        return res.status(201).end();
+                    }
+                }
+                await prisma.mailVerificationCode.deleteMany({
+                    where: {
+                        emailId: foundTheEmail.id
+                    }
+                })
+
+                const veriificationMail = prisma.mailVerificationCode.create({
+                    data: {
+                        verificationCode: generatedOTP,
+                        emailId: foundTheEmail.id,
+                        expirationTimeInMinutes: codeTTLInMinutes,
+                        expiredAt: new Date(new Date().getTime() + codeTTLInMinutes * 60000),
+                    }
+                })
+
+                if (await veriificationMail && (await veriificationMail).emailId) {
+                    let response = {
+                        body: {
+                            name: "Intact Agro",
+                            intro: `Your password reset code is ${generatedOTP}`,
+                            outro: `This will expire within ${codeTTLInMinutes} minutes...`
+                        }
+                    }
+
+                    let mail = MailGenerator.generate(response)
+                    let message = {
+                        from: process.env.MAIL_OF_SENDER_CONFIGURED,
+                        to: email,
+                        subject: 'Password resetion from Intact Agro Cent',
+                        html: mail
+                    }
+
+                    let transporter = nodemailer.createTransport(config)
+
+                    transporter.sendMail(message)
+                        .then(() => {
+                            res.statusMessage = "Password Reset code sent to your mail. Reset password using that code.";
+                            return res.status(201).end();
+                        })
+                        .catch((error) => {
+                            console.log(error.message)
+                            res.statusMessage = "Password Reset could not be done now. Please try again after some time.";
+                            return res.status(500).end();
+                        })
+                } else {
+                    console.log("Password Reset code could not be stored in DB")
+                    res.statusMessage = "Password Reset could not be done now. Please try again after some time.";
+                    return res.status(500).end();
+                }
+            } else {
+                console.log('Email not verified')
+                res.statusMessage = "Your Email is not verified yet. Please verify your email first"
+                return res.status(403).end();
+            }
+        } else {
+            console.log('Email not registered')
+            res.statusMessage = "You are not registered. Please register first"
+            return res.status(403).end();
+        }
+    } catch (error) {
+        console.log('Forgot Password Error')
+        res.statusMessage = "Network Issue. Please Try Again sometimes later."
+        return res.status(500).end();
+    }
+})
+
 authRouter.post('/login', async (req, res) => {
     const { email, password } = req.body
 
@@ -29,6 +144,11 @@ authRouter.post('/login', async (req, res) => {
             if (foundTheSameEmail.email === email) {
                 if (foundTheSameEmail.emailVerified) {
                     if ((await Encrypt.comparePassword(password, foundTheSameEmail.password))) {
+                        await prisma.mailVerificationCode.deleteMany({
+                            where: {
+                                emailId: foundTheSameEmail.id
+                            }
+                        })
                         res.statusMessage = "Login Successful"
                         return res.status(200).end();
                     } else {
@@ -132,7 +252,7 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
                             body: {
                                 name: "Intact Agro",
                                 intro: `Your verification code is ${generatedOTP}`,
-                                outro: 'This will expire within 30 minutes...'
+                                outro: `This will expire within ${codeTTLInMinutes} minutes...`
                             }
                         }
 
@@ -250,6 +370,75 @@ authRouter.post('/verifyMail', async (req, res) => {
     }
 })
 
+authRouter.post('/verifyPasswordReset', async (req, res) => {
+
+    const { email, verificationCode, password } = req.body
+    if (!(email && verificationCode && password)) {
+        res.statusMessage = "Provide valid Email with Verification Code and New Password"
+        return res.status(400).end();
+    }
+
+    try {
+        const foundTheEmail = await prisma.registeredMail.findFirst({
+            where: {
+                email: email
+            }
+        })
+
+        if (foundTheEmail) {
+            const verificationCodeOfMail = await prisma.mailVerificationCode.findFirst({
+                where: {
+                    emailId: foundTheEmail.id
+                }
+            })
+            if (foundTheEmail.emailVerified && verificationCodeOfMail && (verificationCodeOfMail.expiredAt >= new Date())) {
+                const encryptedPassowrd = await Encrypt.cryptPassword(password)
+                if (verificationCodeOfMail.verificationCode === verificationCode) {
+                    const verifyTheMail = await prisma.registeredMail.update({
+                        where: {
+                            email: foundTheEmail.email,
+                        },
+                        data: {
+                            password: encryptedPassowrd
+                        }
+                    })
+                    
+                    if (verifyTheMail && verifyTheMail.emailVerified && verifyTheMail.password) {    
+                        await prisma.mailVerificationCode.deleteMany({
+                            where: {
+                                emailId: foundTheEmail.id
+                            }
+                        })
+                        console.log('Password Reset Done')
+                        res.statusMessage = "You have successfully reseted your password."
+                        return res.status(200).end();
+                    } else {
+                        console.log('Password reset incomplete')
+                        res.statusMessage = "Password could not be reset"
+                        return res.status(500).end();
+                    }
+                } else {
+                    console.log('Verification Failure')
+                    res.statusMessage = "Password reset code don't match"
+                    return res.status(401).end();
+                }
+            } else {
+                console.log('Password reset code has expired')
+                res.statusMessage = "This password reset code has been expired"
+                return res.status(409).end();
+            }
+        } else {
+            console.log('Email does not exits')
+            res.statusMessage = "This Email has not been registered yet"
+            return res.status(409).end();
+        }
+    } catch (error) {
+        console.log('Error', error.message)
+        res.statusMessage = "There were some issues. Please try again later"
+        return res.status(409).end();
+    }
+})
+
 authRouter.post('/register', async (req, res) => {
 
     const { email, password } = req.body
@@ -338,7 +527,7 @@ authRouter.post('/register', async (req, res) => {
                                 body: {
                                     name: "Intact Agro",
                                     intro: `Your verification code is ${generatedOTP}`,
-                                    outro: 'This will expire within 30 minutes...'
+                                    outro: `This will expire within ${codeTTLInMinutes} minutes...`
                                 }
                             }
 
@@ -383,7 +572,7 @@ authRouter.post('/register', async (req, res) => {
                             body: {
                                 name: "Intact Agro",
                                 intro: `Your verification code is ${generatedOTP}`,
-                                outro: 'This will expire within 30 minutes...'
+                                outro: `This will expire within ${codeTTLInMinutes} minutes...`
                             }
                         }
 
