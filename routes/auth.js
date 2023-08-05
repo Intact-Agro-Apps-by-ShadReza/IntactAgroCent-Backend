@@ -4,7 +4,17 @@ const Mailgen = require('mailgen')
 const authRouter = Router()
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
-const Encrypt = require('../encryption');
+const Encrypt = require('../encryption')
+
+const emailValidator = (text) => {
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    if (reg.test(text) === false) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
 
 authRouter.get('/', (req, res) => {
     res.send({name: "Assalamu Alaikum from Auth Router"})
@@ -15,7 +25,13 @@ authRouter.post('/forgotPassword', async (req, res) => {
     if (!(email)) {
         res.statusMessage = "Provide a valid Email!"
         return res.status(400).end();
+    } else {
+        if (!emailValidator(email)) {
+            res.statusMessage = "Provide a valid Email!"
+            return res.status(400).end();
+        }
     }
+
 
     try {
         const foundTheEmail = await prisma.registeredMail.findFirst({
@@ -133,6 +149,13 @@ authRouter.post('/login', async (req, res) => {
         return res.status(400).end();
     }
 
+    if(email) {
+        if (!emailValidator(email)) {
+            res.statusMessage = "Provide a valid Email!"
+            return res.status(400).end();
+        }
+    }
+
     try {
         const foundTheSameEmail = await prisma.registeredMail.findFirst({
             where: {
@@ -182,6 +205,11 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
     if (!(email)) {
         res.statusMessage = "Provide valid Email"
         return res.status(400).end();
+    } else {
+        if (!emailValidator(email)) {
+            res.statusMessage = "Provide a valid Email!"
+            return res.status(400).end();
+        }
     }
 
     try {
@@ -304,6 +332,13 @@ authRouter.post('/verifyMail', async (req, res) => {
         return res.status(400).end();
     }
 
+    if(email) {
+        if (!emailValidator(email)) {
+            res.statusMessage = "Provide a valid Email!"
+            return res.status(400).end();
+        }
+    }
+
     try {
         const foundTheEmail = await prisma.registeredMail.findFirst({
             where: {
@@ -378,6 +413,13 @@ authRouter.post('/verifyPasswordReset', async (req, res) => {
         return res.status(400).end();
     }
 
+    if(email) {
+        if (!emailValidator(email)) {
+            res.statusMessage = "Provide a valid Email!"
+            return res.status(400).end();
+        }
+    }
+
     try {
         const foundTheEmail = await prisma.registeredMail.findFirst({
             where: {
@@ -446,6 +488,13 @@ authRouter.post('/register', async (req, res) => {
     if (!(email && password)) {
         res.statusMessage = "Provide valid Email & Password !"
         return res.status(400).end();
+    }
+
+    if(email) {
+        if (!emailValidator(email)) {
+            res.statusMessage = "Provide a valid Email!"
+            return res.status(400).end();
+        }
     }
 
     try {
