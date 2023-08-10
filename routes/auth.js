@@ -1,10 +1,20 @@
 const { Router } = require('express')
-const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer')
 const Mailgen = require('mailgen')
 const authRouter = Router()
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
-const Encrypt = require('../encryption');
+const Encrypt = require('../encryption')
+
+const emailValidator = (text) => {
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/
+    if (reg.test(text) === false) {
+        return false
+    }
+    else {
+        return true
+    }
+}
 
 authRouter.get('/', (req, res) => {
     res.send({name: "Assalamu Alaikum from Auth Router"})
@@ -14,8 +24,14 @@ authRouter.post('/forgotPassword', async (req, res) => {
     const { email } = req.body
     if (!(email)) {
         res.statusMessage = "Provide a valid Email!"
-        return res.status(400).end();
+        return res.status(400).end("Provide a valid Email!")
+    } else {
+        if (!emailValidator(email)) {
+            res.statusMessage = "Provide a valid Email!"
+            return res.status(400).end("Provide a valid Email!")
+        }
     }
+
 
     try {
         const foundTheEmail = await prisma.registeredMail.findFirst({
@@ -55,8 +71,8 @@ authRouter.post('/forgotPassword', async (req, res) => {
 
                 if (verificationCodeForMail) {
                     if (currentTime <= verificationCodeForMail.expiredAt) {
-                        res.statusMessage = "A verification code is already sitting in your mail. Please verify first.";
-                        return res.status(201).end();
+                        res.statusMessage = "A verification code is already sitting in your mail. Please verify first."
+                        return res.status(201).end("A verification code is already sitting in your mail. Please verify first.")
                     }
                 }
                 await prisma.mailVerificationCode.deleteMany({
@@ -95,33 +111,33 @@ authRouter.post('/forgotPassword', async (req, res) => {
 
                     transporter.sendMail(message)
                         .then(() => {
-                            res.statusMessage = "Password Reset code sent to your mail. Reset password using that code.";
-                            return res.status(201).end();
+                            res.statusMessage = "Password Reset code sent to your mail. Reset password using that code."
+                            return res.status(201).end("Password Reset code sent to your mail. Reset password using that code.")
                         })
                         .catch((error) => {
                             console.log(error.message)
-                            res.statusMessage = "Password Reset could not be done now. Please try again after some time.";
-                            return res.status(500).end();
+                            res.statusMessage = "Password Reset could not be done now. Please try again after some time."
+                            return res.status(500).end("Password Reset could not be done now. Please try again after some time.")
                         })
                 } else {
                     console.log("Password Reset code could not be stored in DB")
-                    res.statusMessage = "Password Reset could not be done now. Please try again after some time.";
-                    return res.status(500).end();
+                    res.statusMessage = "Password Reset could not be done now. Please try again after some time."
+                    return res.status(500).end("Password Reset could not be done now. Please try again after some time.")
                 }
             } else {
                 console.log('Email not verified')
                 res.statusMessage = "Your Email is not verified yet. Please verify your email first"
-                return res.status(403).end();
+                return res.status(403).end("Your Email is not verified yet. Please verify your email first")
             }
         } else {
             console.log('Email not registered')
             res.statusMessage = "You are not registered. Please register first"
-            return res.status(403).end();
+            return res.status(403).end("You are not registered. Please register first")
         }
     } catch (error) {
         console.log('Forgot Password Error')
         res.statusMessage = "Network Issue. Please Try Again sometimes later."
-        return res.status(500).end();
+        return res.status(500).end("Network Issue. Please Try Again sometimes later.")
     }
 })
 
@@ -130,7 +146,14 @@ authRouter.post('/login', async (req, res) => {
 
     if (!(email && password)) {
         res.statusMessage = "Provide Email & Password !"
-        return res.status(400).end();
+        return res.status(400).end("Provide Email & Password !")
+    }
+
+    if(email) {
+        if (!emailValidator(email)) {
+            res.statusMessage = "Provide a valid Email!"
+            return res.status(400).end("Provide a valid Email!")
+        }
     }
 
     try {
@@ -150,29 +173,33 @@ authRouter.post('/login', async (req, res) => {
                             }
                         })
                         res.statusMessage = "Login Successful"
-                        return res.status(200).end();
+                        res.set({
+                            userEmail: email,
+                            userVerification: foundTheSameEmail.emailVerified
+                        })
+                        return res.status(200).end("Login Successful")
                     } else {
                         res.statusMessage = "Invalid Credentials"
-                        return res.status(403).end();
+                        return res.status(403).end("Invalid Credentials")
                     }
                 } else {
                     res.statusMessage = "Email not verified yet. An OTP has been sent to your email."
-                    return res.status(401).end();
+                    return res.status(401).end("Email not verified yet. An OTP has been sent to your email.")
                 }
             } else {
                 console.log('invalid creds')
                 res.statusMessage = "Invalid Credentials"
-                return res.status(403).end();
+                return res.status(403).end("Invalid Credentials")
             }
         } else {
             console.log('Not Registered')
             res.statusMessage = "You are not registered. Please register first"
-            return res.status(403).end();
+            return res.status(403).end("You are not registered. Please register first")
         }
     } catch (error) {
         console.log('Login Error')
         res.statusMessage = "Network Issue. Please Try Again sometimes later."
-        return res.status(500).end();
+        return res.status(500).end("Network Issue. Please Try Again sometimes later.")
     }
 })
 
@@ -181,7 +208,12 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
     const { email } = req.body
     if (!(email)) {
         res.statusMessage = "Provide valid Email"
-        return res.status(400).end();
+        return res.status(400).end("Provide valid Email")
+    } else {
+        if (!emailValidator(email)) {
+            res.statusMessage = "Provide a valid Email!"
+            return res.status(400).end("Provide a valid Email!")
+        }
     }
 
     try {
@@ -194,11 +226,10 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
         if (foundTheEmail && foundTheEmail.emailVerified) {
             console.log('Email already verified')
             res.statusMessage = "Your Email is already verified."
-            return res.status(400).end();
+            return res.status(400).end("Your Email is already verified.")
         }
 
         if (foundTheEmail) {
-
             let config = {
                 service: 'gmail',
                 auth: {
@@ -228,8 +259,8 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
             if (verificationCodeForMail) {
                 const currentTime = new Date()
                 if (currentTime <= verificationCodeForMail.expiredAt) {
-                    res.statusMessage = "A verification code is already sitting in your mail. Please verify first.";
-                    return res.status(201).end();
+                    res.statusMessage = "A verification code is already sitting in your mail. Please verify first."
+                    return res.status(201).end("A verification code is already sitting in your mail. Please verify first.")
                 } else {
                     await prisma.mailVerificationCode.deleteMany({
                         where: {
@@ -268,30 +299,30 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
 
                         transporter.sendMail(message)
                             .then(() => {
-                                res.statusMessage = "Registration Successful. Please verify your mail. We've already sent you a verification mail to your registered Email.";
-                                return res.status(201).end();
+                                res.statusMessage = "Registration Successful. Please verify your mail. We've already sent you a verification mail to your registered Email."
+                                return res.status(201).end("Registration Successful. Please verify your mail. We've already sent you a verification mail to your registered Email.")
                             })
                             .catch((error) => {
                                 console.log(error.message)
-                                res.statusMessage = "Registration Successful. But mail not sent.";
-                                return res.status(500).end();
+                                res.statusMessage = "Registration Successful. But mail not sent."
+                                return res.status(500).end("Registration Successful. But mail not sent.")
                             })
                     } else {
                         console.log("VerificationCode could not be stored in DB")
-                        res.statusMessage = "Registration Successful. But mail not sent.";
-                        return res.status(500).end();
+                        res.statusMessage = "Registration Successful. But mail not sent."
+                        return res.status(500).end("Registration Successful. But mail not sent.")
                     }
                 }
             }
         } else {
             console.log('Email not registered')
             res.statusMessage = "Your Email is not registered. Please register at first."
-            return res.status(409).end();
+            return res.status(409).end("Your Email is not registered. Please register at first.")
         }
     } catch (error) {
         console.log('Error', error.message)
         res.statusMessage = "There were some issues. Please try again later"
-        return res.status(409).end();
+        return res.status(409).end("There were some issues. Please try again later")
     }
 
 })
@@ -301,7 +332,14 @@ authRouter.post('/verifyMail', async (req, res) => {
     const { email, verificationCode } = req.body
     if (!(email && verificationCode)) {
         res.statusMessage = "Provide valid Email with Verification Code"
-        return res.status(400).end();
+        return res.status(400).end("Provide valid Email with Verification Code")
+    }
+
+    if(email) {
+        if (!emailValidator(email)) {
+            res.statusMessage = "Provide a valid Email!"
+            return res.status(400).end("Provide a valid Email!")
+        }
     }
 
     try {
@@ -314,7 +352,7 @@ authRouter.post('/verifyMail', async (req, res) => {
         if (foundTheEmail && foundTheEmail.emailVerified) {
             console.log('Verification already done')
             res.statusMessage = "Mail already verified"
-            return res.status(200).end();
+            return res.status(200).end("Mail already verified")
         }
 
         if (foundTheEmail) {
@@ -342,31 +380,31 @@ authRouter.post('/verifyMail', async (req, res) => {
                         })
                         console.log('Verification done')
                         res.statusMessage = "Mail verified"
-                        return res.status(200).end();
+                        return res.status(200).end("Mail verified")
                     } else {
                         console.log('Verification incomplete')
                         res.statusMessage = "Mail could not be verified"
-                        return res.status(500).end();
+                        return res.status(500).end("Mail could not be verified")
                     }
                 } else {
                     console.log('Verification Failure')
                     res.statusMessage = "Mail could not be verified"
-                    return res.status(401).end();
+                    return res.status(401).end("Mail could not be verified")
                 }
             } else {
                 console.log('Verification code has expired')
                 res.statusMessage = "This verification code has been expired"
-                return res.status(409).end();
+                return res.status(409).end("This verification code has been expired")
             }
         } else {
             console.log('Email does not exits')
             res.statusMessage = "This Email has not been registered yet"
-            return res.status(409).end();
+            return res.status(409).end("This Email has not been registered yet")
         }
     } catch (error) {
         console.log('Error', error.message)
         res.statusMessage = "There were some issues. Please try again later"
-        return res.status(409).end();
+        return res.status(409).end("There were some issues. Please try again later")
     }
 })
 
@@ -375,7 +413,14 @@ authRouter.post('/verifyPasswordReset', async (req, res) => {
     const { email, verificationCode, password } = req.body
     if (!(email && verificationCode && password)) {
         res.statusMessage = "Provide valid Email with Verification Code and New Password"
-        return res.status(400).end();
+        return res.status(400).end("Provide valid Email with Verification Code and New Password")
+    }
+
+    if(email) {
+        if (!emailValidator(email)) {
+            res.statusMessage = "Provide a valid Email!"
+            return res.status(400).end("Provide a valid Email!")
+        }
     }
 
     try {
@@ -411,31 +456,31 @@ authRouter.post('/verifyPasswordReset', async (req, res) => {
                         })
                         console.log('Password Reset Done')
                         res.statusMessage = "You have successfully reseted your password."
-                        return res.status(200).end();
+                        return res.status(200).end("You have successfully reseted your password.")
                     } else {
                         console.log('Password reset incomplete')
                         res.statusMessage = "Password could not be reset"
-                        return res.status(500).end();
+                        return res.status(500).end("Password could not be reset")
                     }
                 } else {
                     console.log('Verification Failure')
                     res.statusMessage = "Password reset code don't match"
-                    return res.status(401).end();
+                    return res.status(401).end("Password reset code don't match")
                 }
             } else {
                 console.log('Password reset code has expired')
                 res.statusMessage = "This password reset code has been expired"
-                return res.status(409).end();
+                return res.status(409).end("This password reset code has been expired")
             }
         } else {
             console.log('Email does not exits')
             res.statusMessage = "This Email has not been registered yet"
-            return res.status(409).end();
+            return res.status(409).end("This Email has not been registered yet")
         }
     } catch (error) {
         console.log('Error', error.message)
         res.statusMessage = "There were some issues. Please try again later"
-        return res.status(409).end();
+        return res.status(409).end("There were some issues. Please try again later")
     }
 })
 
@@ -445,7 +490,14 @@ authRouter.post('/register', async (req, res) => {
 
     if (!(email && password)) {
         res.statusMessage = "Provide valid Email & Password !"
-        return res.status(400).end();
+        return res.status(400).end("Provide valid Email & Password !")
+    }
+
+    if(email) {
+        if (!emailValidator(email)) {
+            res.statusMessage = "Provide a valid Email!"
+            return res.status(400).end("Provide a valid Email!")
+        }
     }
 
     try {
@@ -459,8 +511,8 @@ authRouter.post('/register', async (req, res) => {
             // the user has already registered
             console.log('Same Email already exists')
             const emailVerificationMessage = foundTheSameEmail.emailVerified ? "Please Signin." : "Please do the verification."
-            res.statusMessage = "This Email has already joined. " + emailVerificationMessage;
-            return res.status(409).end();
+            res.statusMessage = "This Email has already joined. " + emailVerificationMessage
+            return res.status(409).end("This Email has already joined. " + emailVerificationMessage)
         } else {
             // the user has not yet registered
             const encryptedPassowrd = await Encrypt.cryptPassword(password)
@@ -503,8 +555,8 @@ authRouter.post('/register', async (req, res) => {
                 if (verificationCodeForMail) {
                     const currentTime = new Date()
                     if (currentTime >= verificationCodeForMail.expiredAt) {
-                        res.statusMessage = "A verification code is already sitting in your mail. Please verify first.";
-                        return res.status(201).end();
+                        res.statusMessage = "A verification code is already sitting in your mail. Please verify first."
+                        return res.status(201).end("A verification code is already sitting in your mail. Please verify first.")
                     } else {
                         await prisma.mailVerificationCode.deleteMany({
                             where: {
@@ -543,18 +595,18 @@ authRouter.post('/register', async (req, res) => {
 
                             transporter.sendMail(message)
                                 .then(() => {
-                                    res.statusMessage = "Registration Successful. Please verify your mail. We've already sent you a verification mail to your registered Email.";
-                                    return res.status(201).end();
+                                    res.statusMessage = "Registration Successful. Please verify your mail. We've already sent you a verification mail to your registered Email."
+                                    return res.status(201).end("Registration Successful. Please verify your mail. We've already sent you a verification mail to your registered Email.")
                                 })
                                 .catch((error) => {
                                     console.log(error.message)
-                                    res.statusMessage = "Registration Successful. But mail not sent.";
-                                    return res.status(500).end();
+                                    res.statusMessage = "Registration Successful. But mail not sent."
+                                    return res.status(500).end("Registration Successful. But mail not sent.")
                                 })
                         } else {
                             console.log("VerificationCode could not be stored in DB")
-                            res.statusMessage = "Registration Successful. But mail not sent.";
-                            return res.status(500).end();
+                            res.statusMessage = "Registration Successful. But mail not sent."
+                            return res.status(500).end("Registration Successful. But mail not sent.")
                         }
                     }
                 } else {
@@ -588,23 +640,23 @@ authRouter.post('/register', async (req, res) => {
 
                         transporter.sendMail(message)
                             .then(() => {
-                                res.statusMessage = "Registration Successful. Please verify your mail. We've already sent you a verification mail to your registered Email.";
-                                return res.status(201).end();
+                                res.statusMessage = "Registration Successful. Please verify your mail. We've already sent you a verification mail to your registered Email."
+                                return res.status(201).end("Registration Successful. Please verify your mail. We've already sent you a verification mail to your registered Email.")
                             })
                             .catch((error) => {
                                 console.log(error.message)
-                                res.statusMessage = "Registration Successful. But mail not sent.";
-                                return res.status(500).end();
+                                res.statusMessage = "Registration Successful. But mail not sent."
+                                return res.status(500).end("Registration Successful. But mail not sent.")
                             })
                     } else {
                         console.log("VerificationCode could not be stored in DB")
-                        res.statusMessage = "Registration Successful. But mail not sent.";
-                        return res.status(500).end();
+                        res.statusMessage = "Registration Successful. But mail not sent."
+                        return res.status(500).end("Registration Successful. But mail not sent.")
                     }
                 }
             } else {
-                res.statusMessage = "Registration Unsuccessful. Please try again later ";
-                return res.status(409).end();
+                res.statusMessage = "Registration Unsuccessful. Please try again later "
+                return res.status(409).end("Registration Unsuccessful. Please try again later ")
             }
         }
 
@@ -612,7 +664,7 @@ authRouter.post('/register', async (req, res) => {
     } catch(error) {
         console.log('Error', error.message)
         res.statusMessage = "There were some issues. Please try again later"
-        return res.status(409).end();
+        return res.status(409).end("There were some issues. Please try again later")
     }
         
 })
