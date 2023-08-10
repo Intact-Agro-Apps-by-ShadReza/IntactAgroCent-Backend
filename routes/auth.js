@@ -173,6 +173,10 @@ authRouter.post('/login', async (req, res) => {
                             }
                         })
                         res.statusMessage = "Login Successful"
+                        res.set({
+                            userEmail: email,
+                            userVerification: foundTheSameEmail.emailVerified
+                        })
                         return res.status(200).end("Login Successful")
                     } else {
                         res.statusMessage = "Invalid Credentials"
@@ -226,7 +230,6 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
         }
 
         if (foundTheEmail) {
-
             let config = {
                 service: 'gmail',
                 auth: {
