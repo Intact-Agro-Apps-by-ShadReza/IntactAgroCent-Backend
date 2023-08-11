@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 const userRouter  = require('./routes/users.js');
 const authRouter = require('./routes/auth.js');
 const bodyParser = require('body-parser');
+const projectRouter = require('./routes/projects.js');
+const imageRouter = require('./routes/images.js');
 
 dotenv.config();
 
@@ -18,6 +20,8 @@ app.use(cors({
 
 app.use('/users', userRouter)
 app.use('/auth', authRouter)
+app.use('/projects', projectRouter)
+app.use('/images', imageRouter)
 app.get('/', (req, res) => {
     res.send("Assalamu Alaikum")
 })
