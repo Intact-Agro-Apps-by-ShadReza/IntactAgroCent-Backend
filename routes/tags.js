@@ -81,6 +81,71 @@ tagRouter.post('/create', async (req, res) => {
     }
 })
 
+tagRouter.put('/update', async (req, res) => {
+    const { tagId, newTag } = req.body 
+
+    if (tagId && newTag.title && newTag.description && newTag.applicableFor) {
+        try {
+            const conflictingTag = await prisma.tag.findFirst({
+                where: {
+                    title: newTag.title,
+                    applicableFor: newTag.applicableFor
+                }
+            })
+            if (conflictingTag) {
+                console.log("same tag found with the updated title and application")
+                res.set({
+                    notificationTitle: "Conflicting Tag Found",
+                    notificationDescription: "Same tag exists where the title and application is as the updated tag"
+                })
+                return res.status(403).end()
+            } else {
+                try {
+                    const updatedTag = await prisma.tag.update({
+                        where: {
+                            id: tagId
+                        },
+                        data: {
+                            title: newTag.title,
+                            description: newTag.description,
+                            applicableFor: newTag.applicableFor
+                        }
+                    })
+                    if (updatedTag) {
+                        console.log('tag updated')
+                        res.send(updatedTag)
+                    } else {
+                        console.log("tag could not be updated")
+                        res.set({
+                            notificationTitle: "Tag Not Updated",
+                            notificationDescription: "Please try again after sometimes. Tag was not updated."
+                        })
+                        return res.status(500).end()
+                    }
+                } catch (error) {
+                    console.log("tag not found")
+                    res.set({
+                        notificationTitle: "Tag not found",
+                        notificationDescription: "Please check if this tag is there or not."
+                    })
+                    return res.status(403).end()
+                }
+            }
+        } catch (error) {
+
+        }
+        
+    } else {
+        console.log("tag invalid params")
+        res.set({
+            notificationTitle: "Invalid Parameters for Updating",
+            notificationDescription: "Please provide correct id for the request."
+        })
+        return res.status(400).end()
+    }
+
+})
+
 tagRouter.delete('/delete', async (req, res) => {
     const {tagId} = req.body
 
