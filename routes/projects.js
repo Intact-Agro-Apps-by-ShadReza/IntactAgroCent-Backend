@@ -20,7 +20,8 @@ projectRouter.get('/', async (req, res) => {
 })
 
 projectRouter.post('/create', async (req, res) => {
-    const { title,
+    const {
+        title,
         description,
         investingCapitalPerUnitinBDT,
         returnOnInterestRate,
