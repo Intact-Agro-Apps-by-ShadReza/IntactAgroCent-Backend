@@ -98,4 +98,93 @@ projectRouter.post('/create', async (req, res) => {
     }
 })
 
+projectRouter.put('/update', async (req, res) => {
+    const { projectId, newProject } = req.body 
+
+    if (projectId &&
+        newProject.title &&
+        newProject.description &&
+        newProject.investingCapitalPerUnitinBDT &&
+        newProject.returnOnInterestRate &&
+        newProject.returnOnInterestReturnPeriodinMonths &&
+        newProject.featuredPictureId &&
+        newProject.pictureIds &&
+        newProject.tagIds &&
+        newProject.projectStatus &&
+        newProject.location
+    ) {
+        try {
+            const conflictingProject = await prisma.project.findFirst({
+                where: {
+                    title: newProject.title,
+                    featuredPictureId: newProject.featuredPictureId,
+                    projectStatus: newProject.projectStatus,
+                    location: newProject.location,
+                }
+            })
+            if (conflictingProject) {
+                console.log("same project found with the updated title and application")
+                res.set({
+                    notificationTitle: "Conflicting Project Found",
+                    notificationDescription: "Same project exists where the title, feature image, status nad lovation are as the updated project"
+                })
+                return res.status(403).end()
+            } else {
+                try {
+                    const updatedProject = await prisma.project.update({
+                        where: {
+                            id: projectId
+                        },
+                        data: {
+                            title: newProject.title,
+                            description: newProject.description,
+                            investingCapitalPerUnitinBDT: newProject.investingCapitalPerUnitinBDT,
+                            returnOnInterestRate: newProject.returnOnInterestRate,
+                            returnOnInterestReturnPeriodinMonths: newProject.returnOnInterestReturnPeriodinMonths,
+                            featuredPictureId: newProject.featuredPictureId,
+                            pictureIds: {set: newProject.pictureIds},
+                            tagIds: {set: newProject.tagIds},
+                            projectStatus: newProject.projectStatus,
+                            location: newProject.location
+                        }
+                    })
+                    if (updatedProject) {
+                        console.log('project updated')
+                        res.send(updatedProject)
+                    } else {
+                        console.log("project could not be updated")
+                        res.set({
+                            notificationTitle: "Project Not Updated",
+                            notificationDescription: "Please try again after sometimes. Project was not updated."
+                        })
+                        return res.status(500).end()
+                    }
+                } catch (error) {
+                    console.log("project not found")
+                    res.set({
+                        notificationTitle: "Project not found",
+                        notificationDescription: "Please check if this project is there or not."
+                    })
+                    return res.status(403).end()
+                }
+            }
+        } catch (error) {
+            console.log("project remains the same")
+            res.set({
+                notificationTitle: "Network Issue",
+                notificationDescription: "Please try again after sometimes. There seems to be some issue with the network connection."
+            })
+        }
+        
+    } else {
+        console.log("project invalid params")
+        res.set({
+            notificationTitle: "Invalid Parameters for Updating",
+            notificationDescription: "Please provide correct id for the request."
+        })
+        return res.status(400).end()
+    }
+
+})
+
 module.exports = projectRouter

@@ -132,7 +132,11 @@ tagRouter.put('/update', async (req, res) => {
                 }
             }
         } catch (error) {
-
+            console.log("tag remains the same")
+            res.set({
+                notificationTitle: "Network Issue",
+                notificationDescription: "Please try again after sometimes. There seems to be some issue with the network connection."
+            })
         }
         
     } else {
