@@ -35,17 +35,20 @@ projectRouter.post('/create', async (req, res) => {
     if (title && description && investingCapitalPerUnitinBDT && returnOnInterestRate && returnOnInterestReturnPeriodinMonths && featuredPictureId && pictureIds && pictureIds.length && tagIds.length && tagIds && projectStatus && location) {
         try {
 
-            const sameTitledProject = await prisma.project.findFirst({
+            const sameConfiguredProject = await prisma.project.findFirst({
                 where: {
-                    title: title
+                    OR: [
+                        { title: title },
+                        { featuredPictureId: featuredPictureId },
+                    ]
                 }
             })
 
-            if (sameTitledProject) {
-                console.log('same titled project found')
+            if (sameConfiguredProject) {
+                console.log('same configured project found')
                 res.set({
                     notificationTitle: "Project Creation Unsuccessful",
-                    notificationDescription: "Another project is having the same title."
+                    notificationDescription: "Another project is having the same configuration."
                 })
                 return res.status(406).end()
             } else {
@@ -116,10 +119,10 @@ projectRouter.put('/update', async (req, res) => {
         try {
             const conflictingProject = await prisma.project.findFirst({
                 where: {
-                    title: newProject.title,
-                    featuredPictureId: newProject.featuredPictureId,
-                    projectStatus: newProject.projectStatus,
-                    location: newProject.location,
+                    OR: [
+                        { title: newProject.title },
+                        { featuredPictureId: newProject.featuredPictureId },
+                    ]
                 }
             })
             if (conflictingProject) {
