@@ -78,4 +78,34 @@ imageRouter.post('/create', async (req, res) => {
     }
 })
 
+imageRouter.delete('/delete', async (req, res) => {
+    const {imageId} = req.body
+
+    if(imageId) {
+        try {
+            const deletedImage = await prisma.image.delete({
+                where: {
+                    id: imageId
+                }
+            })
+            console.log(deletedImage)
+            res.send(deletedImage)
+        } catch (error) {
+            console.log("Image could not delete")
+            res.set({
+                notificationTitle: "Delete Unsuccessful",
+                notificationDescription: "Please check the credentials passed for the deletion."
+            })
+            return res.status(500).end()
+        }
+    } else {
+        console.log("Image invalid params")
+        res.set({
+            notificationTitle: "Invalid Parameters",
+            notificationDescription: "Please provide correct id for the request."
+        })
+        return res.status(400).end()
+    }
+})
+
 module.exports = imageRouter
