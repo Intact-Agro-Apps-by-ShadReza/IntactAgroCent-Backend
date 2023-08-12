@@ -26,3 +26,32 @@ model MailVerificationCode {
   emailId                 String   @unique
   creationTime            DateTime @default(now())
 }
+
+model Project {
+  id                                   String   @id @unique @default(uuid())
+  title                                String
+  description                          String
+  investingCapitalPerUnitinBDT         Float
+  returnOnInterestRate                 Float
+  returnOnInterestReturnPeriodinMonths Int
+  featuredPictureId                    String
+  pictureIds                           String[]
+  tagIds                               String[]
+  projectStatus                        String
+  location                             String
+  creationTime                         DateTime @default(now())
+}
+
+model Image {
+  id           String   @id @unique @default(uuid())
+  liveLink     String
+  creationTime DateTime @default(now())
+}
+
+model Tag {
+  id            String   @id @unique @default(uuid())
+  title         String
+  description   String
+  applicableFor String
+  creationTime  DateTime @default(now())
+}
