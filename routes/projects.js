@@ -139,7 +139,7 @@ projectRouter.get('/', async (req, res) => {
                 notificationDescription: "There were some issues connecting with the server. Please try again after sometimes."
             })
             console.log('second')
-            console.log(error.message)
+            console.log(error)
             return res.status(500).end()
         }
     }
