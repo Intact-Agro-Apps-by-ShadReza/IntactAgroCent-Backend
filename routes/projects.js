@@ -5,7 +5,7 @@ const projectRouter = Router()
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
-const filterTheProjects = async (/** @type {number} */ startingProjectIndex, /** @type {number} */ normalGivingCount, /** @type {any[]} */ projects) => {
+const filterTheProjects = async ( startingProjectIndex,  normalGivingCount, projects) => {
     let filteredProjects = []
     for (let i = startingProjectIndex; i < startingProjectIndex+normalGivingCount; i++) {
         filteredProjects.push(projects[i])
