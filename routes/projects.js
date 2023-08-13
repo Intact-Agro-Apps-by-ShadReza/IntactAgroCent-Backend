@@ -94,8 +94,8 @@ projectRouter.get('/', async (req, res) => {
                             }
                         }
                         await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
-                            .then(response => {
-                                res.send({
+                            .then(async response => {
+                                await res.send({
                                     totalProjectCount: projectsCount,
                                     filteredProjects: response
                                 })
@@ -126,8 +126,8 @@ projectRouter.get('/', async (req, res) => {
                             }
                         }
                         await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
-                            .then(response => {
-                                res.send({
+                            .then(async response => {
+                                await res.send({
                                     totalProjectCount: projectsCount,
                                     filteredProjects: response
                                 })
@@ -158,8 +158,8 @@ projectRouter.get('/', async (req, res) => {
                             }
                         }
                         await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
-                            .then(response => {
-                                res.send({
+                            .then(async response => {
+                                await res.send({
                                     totalProjectCount: projectsCount,
                                     filteredProjects: response
                                 })
@@ -190,8 +190,8 @@ projectRouter.get('/', async (req, res) => {
                             }
                         }
                         await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
-                            .then(response => {
-                                res.send({
+                            .then(async response => {
+                                await res.send({
                                     totalProjectCount: projectsCount,
                                     filteredProjects: response
                                 })
@@ -218,8 +218,8 @@ projectRouter.get('/', async (req, res) => {
                             }
                         }
                         await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
-                            .then(response => {
-                                res.send({
+                            .then(async response => {
+                                await res.send({
                                     totalProjectCount: projectsCount,
                                     filteredProjects: response
                                 })
