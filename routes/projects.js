@@ -124,6 +124,7 @@ projectRouter.get('/', async (req, res) => {
                         notificationTitle: "Network Error",
                         notificationDescription: "There were some issues connecting with the server. Please try again after sometimes."
                     })
+                    console.log('first')
                     return res.status(500).end()
                 }
             }
@@ -132,6 +133,7 @@ projectRouter.get('/', async (req, res) => {
                 notificationTitle: "Network Error",
                 notificationDescription: "There were some issues connecting with the server. Please try again after sometimes."
             })
+            console.log('second')
             return res.status(500).end()
         }
     }
