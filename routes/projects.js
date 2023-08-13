@@ -3,6 +3,7 @@ const { Router } = require('express')
 const projectRouter = Router()
 
 const { PrismaClient } = require('@prisma/client')
+const { error } = require('console')
 const prisma = new PrismaClient()
 
 const filterTheProjects = async ( startingProjectIndex,  normalGivingCount, projects) => {
@@ -71,54 +72,163 @@ projectRouter.get('/', async (req, res) => {
                     filter = queryFilter.toString()
                 }
                 if (filter === "sort-by-name-asc") {
-                    projects = await prisma.project.findMany({
+                    await prisma.project.findMany({
                         orderBy: {
                             title: 'asc',
                         },
+                    }).then(async response => {
+                        projects = response
+                        const projectsCount = projects.length
+                        if (normalGivingCount >= projectsCount) {
+                            normalGivingCount = projectsCount
+                            startingProjectIndex = 0
+                        } else {
+                            if (normalGivingCount < 1) {
+                                normalGivingCount = 1
+                            }
+                            const maxPageNumberCount = Math.ceil(projectsCount / normalGivingCount)
+                            if (startingProjectIndex >= maxPageNumberCount) {
+                                startingProjectIndex = maxPageNumberCount - 1
+                            } else if (startingProjectIndex < 0) {
+                                startingProjectIndex = 0
+                            }
+                        }
+                        await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
+                            .then(response => {
+                                res.send({
+                                    totalProjectCount: projectsCount,
+                                    filteredProjects: response
+                                })
+                            })
+                    }).catch(error => {
+                        console.log("name_asc",error)
                     })
                 } else if (filter === "sort-by-name-desc") {
-                    projects = await prisma.project.findMany({
+                    await prisma.project.findMany({
                         orderBy: {
                             title: 'desc',
                         },
+                    }).then(async response => {
+                        projects = response
+                        const projectsCount = projects.length
+                        if (normalGivingCount >= projectsCount) {
+                            normalGivingCount = projectsCount
+                            startingProjectIndex = 0
+                        } else {
+                            if (normalGivingCount < 1) {
+                                normalGivingCount = 1
+                            }
+                            const maxPageNumberCount = Math.ceil(projectsCount / normalGivingCount)
+                            if (startingProjectIndex >= maxPageNumberCount) {
+                                startingProjectIndex = maxPageNumberCount - 1
+                            } else if (startingProjectIndex < 0) {
+                                startingProjectIndex = 0
+                            }
+                        }
+                        await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
+                            .then(response => {
+                                res.send({
+                                    totalProjectCount: projectsCount,
+                                    filteredProjects: response
+                                })
+                            })
+                    }).catch(error => {
+                        console.log("name_desc",error)
                     })
                 } else if (filter === "sort-by-created-asc") {
-                    projects = await prisma.project.findMany({
+                    await prisma.project.findMany({
                         orderBy: {
                             creationTime: 'asc',
                         },
+                    }).then(async response => {
+                        projects = response
+                        const projectsCount = projects.length
+                        if (normalGivingCount >= projectsCount) {
+                            normalGivingCount = projectsCount
+                            startingProjectIndex = 0
+                        } else {
+                            if (normalGivingCount < 1) {
+                                normalGivingCount = 1
+                            }
+                            const maxPageNumberCount = Math.ceil(projectsCount / normalGivingCount)
+                            if (startingProjectIndex >= maxPageNumberCount) {
+                                startingProjectIndex = maxPageNumberCount - 1
+                            } else if (startingProjectIndex < 0) {
+                                startingProjectIndex = 0
+                            }
+                        }
+                        await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
+                            .then(response => {
+                                res.send({
+                                    totalProjectCount: projectsCount,
+                                    filteredProjects: response
+                                })
+                            })
+                    }).catch(error => {
+                        console.log("created_asc",error)
                     })
                 } else if (filter === "sort-by-created-desc") {
-                    projects = await prisma.project.findMany({
+                    await prisma.project.findMany({
                         orderBy: {
                             creationTime: 'desc',
                         },
+                    }).then(async response => {
+                        projects = response
+                        const projectsCount = projects.length
+                        if (normalGivingCount >= projectsCount) {
+                            normalGivingCount = projectsCount
+                            startingProjectIndex = 0
+                        } else {
+                            if (normalGivingCount < 1) {
+                                normalGivingCount = 1
+                            }
+                            const maxPageNumberCount = Math.ceil(projectsCount / normalGivingCount)
+                            if (startingProjectIndex >= maxPageNumberCount) {
+                                startingProjectIndex = maxPageNumberCount - 1
+                            } else if (startingProjectIndex < 0) {
+                                startingProjectIndex = 0
+                            }
+                        }
+                        await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
+                            .then(response => {
+                                res.send({
+                                    totalProjectCount: projectsCount,
+                                    filteredProjects: response
+                                })
+                            })
+                    }).catch(error => {
+                        console.log("created_desc",error)
                     })
                 } else {
-                    projects = await prisma.project.findMany()
-                }
-                const projectsCount = projects.length
-                if (normalGivingCount >= projectsCount) {
-                    normalGivingCount = projectsCount
-                    startingProjectIndex = 0
-                } else {
-                    if (normalGivingCount < 1) {
-                        normalGivingCount = 1
-                    }
-                    const maxPageNumberCount = Math.ceil(projectsCount / normalGivingCount)
-                    if (startingProjectIndex >= maxPageNumberCount) {
-                        startingProjectIndex = maxPageNumberCount - 1
-                    } else if (startingProjectIndex < 0) {
-                        startingProjectIndex = 0
-                    }
-                }
-                await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
-                    .then(response => {
-                        res.send({
-                            totalProjectCount: projectsCount,
-                            filteredProjects: response
-                        })
+                    await prisma.project.findMany().then(async response => {
+                        projects = response
+                        const projectsCount = projects.length
+                        if (normalGivingCount >= projectsCount) {
+                            normalGivingCount = projectsCount
+                            startingProjectIndex = 0
+                        } else {
+                            if (normalGivingCount < 1) {
+                                normalGivingCount = 1
+                            }
+                            const maxPageNumberCount = Math.ceil(projectsCount / normalGivingCount)
+                            if (startingProjectIndex >= maxPageNumberCount) {
+                                startingProjectIndex = maxPageNumberCount - 1
+                            } else if (startingProjectIndex < 0) {
+                                startingProjectIndex = 0
+                            }
+                        }
+                        await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
+                            .then(response => {
+                                res.send({
+                                    totalProjectCount: projectsCount,
+                                    filteredProjects: response
+                                })
+                            })
+                    }).catch(error => {
+                        console.log("else",error)
                     })
+                }
+                
             } catch(error) {
                 console.log(error.message)
                 res.set({
