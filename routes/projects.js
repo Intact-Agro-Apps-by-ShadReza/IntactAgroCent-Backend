@@ -128,12 +128,13 @@ projectRouter.get('/', async (req, res) => {
                     return res.status(500).end()
                 }
             }
-        } catch {
+        } catch(error) {
             res.set({
                 notificationTitle: "Network Error",
                 notificationDescription: "There were some issues connecting with the server. Please try again after sometimes."
             })
             console.log('second')
+            console.log(error.message)
             return res.status(500).end()
         }
     }
