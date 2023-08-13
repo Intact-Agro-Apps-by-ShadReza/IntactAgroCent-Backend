@@ -23,19 +23,19 @@ projectRouter.get('/', async (req, res) => {
     
     try {
 
-        let queryStartingPageNumber = req.query.startingPageNumber
-        let queryPerPageCount = req.query.perPageCount
+        // let queryStartingPageNumber = req.query.startingPageNumber
+        // let queryPerPageCount = req.query.perPageCount
 
         let startingPageNumber = 1
         let perPageCount = 6
 
-        if (queryStartingPageNumber && parseInt(queryStartingPageNumber.toString())) {
-            startingPageNumber = parseInt(queryStartingPageNumber.toString())
-        }
+        // if (queryStartingPageNumber && parseInt(queryStartingPageNumber.toString())) {
+        //     startingPageNumber = parseInt(queryStartingPageNumber.toString())
+        // }
 
-        if (queryPerPageCount && parseInt(queryPerPageCount.toString())) {
-            perPageCount = parseInt(queryPerPageCount.toString())
-        }
+        // if (queryPerPageCount && parseInt(queryPerPageCount.toString())) {
+        //     perPageCount = parseInt(queryPerPageCount.toString())
+        // }
 
         
         if (startingPageNumber && perPageCount) {
@@ -67,10 +67,10 @@ projectRouter.get('/', async (req, res) => {
             let projects = []
             try {
                 let filter = ''
-                const queryFilter = req.query.filter
-                if (queryFilter && queryFilter.toString()) {
-                    filter = queryFilter.toString()
-                }
+                // const queryFilter = req.query.filter
+                // if (queryFilter && queryFilter.toString()) {
+                //     filter = queryFilter.toString()
+                // }
                 if (filter === "sort-by-name-asc") {
                     await prisma.project.findMany({
                         orderBy: {
