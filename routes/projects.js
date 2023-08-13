@@ -8,7 +8,6 @@ const prisma = new PrismaClient()
 const filterTheProjects = async (/** @type {number} */ startingProjectIndex, /** @type {number} */ normalGivingCount, /** @type {any[]} */ projects) => {
     let filteredProjects = []
     for (let i = startingProjectIndex; i < startingProjectIndex+normalGivingCount; i++) {
-        console.log(i)
         filteredProjects.push(projects[i])
     }
     return filteredProjects
