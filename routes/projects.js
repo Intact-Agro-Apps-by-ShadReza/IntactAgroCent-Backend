@@ -55,82 +55,80 @@ projectRouter.get('/', async (req, res) => {
         normalGivingCount = 6
     } finally {
         try {
-            await prisma.project.count().then(async (response) => {
-                const projectsCount = response
-                console.log(projectsCount)
-                if (projectsCount < 1) {
-                    res.set({
-                        notificationTitle: "No Projects Found",
-                        notificationDescription: "Currently there are no project enlisted."
+            // const projectsCount = await prisma.project.count()
+            // if (projectsCount < 1) {
+            //     res.set({
+            //         notificationTitle: "No Projects Found",
+            //         notificationDescription: "Currently there are no project enlisted."
+            //     })
+            //     return res.status(404).end()
+            // } else {
+            let projects = []
+            try {
+                let filter = ''
+                const queryFilter = req.query.filter
+                if (queryFilter && queryFilter.toString()) {
+                    filter = queryFilter.toString()
+                }
+                if (filter === "sort-by-name-asc") {
+                    projects = await prisma.project.findMany({
+                        orderBy: {
+                            title: 'asc',
+                        },
                     })
-                    return res.status(404).end()
+                } else if (filter === "sort-by-name-desc") {
+                    projects = await prisma.project.findMany({
+                        orderBy: {
+                            title: 'desc',
+                        },
+                    })
+                } else if (filter === "sort-by-created-asc") {
+                    projects = await prisma.project.findMany({
+                        orderBy: {
+                            creationTime: 'asc',
+                        },
+                    })
+                } else if (filter === "sort-by-created-desc") {
+                    projects = await prisma.project.findMany({
+                        orderBy: {
+                            creationTime: 'desc',
+                        },
+                    })
                 } else {
-                    if (normalGivingCount >= projectsCount) {
-                        normalGivingCount = projectsCount
-                        startingProjectIndex = 0
-                    } else {
-                        if (normalGivingCount < 1) {
-                            normalGivingCount = 1
-                        }
-                        const maxPageNumberCount = Math.ceil(projectsCount / normalGivingCount)
-                        if (startingProjectIndex >= maxPageNumberCount) {
-                            startingProjectIndex = maxPageNumberCount - 1
-                        } else if (startingProjectIndex < 0) {
-                            startingProjectIndex = 0
-                        }
+                    projects = await prisma.project.findMany()
+                }
+                const projectsCount = projects.length
+                if (normalGivingCount >= projectsCount) {
+                    normalGivingCount = projectsCount
+                    startingProjectIndex = 0
+                } else {
+                    if (normalGivingCount < 1) {
+                        normalGivingCount = 1
                     }
-                    let projects = []
-                    try {
-                        let filter = ''
-                        const queryFilter = req.query.filter
-                        if (queryFilter && queryFilter.toString()) {
-                            filter = queryFilter.toString()
-                        }
-                        if (filter === "sort-by-name-asc") {
-                            projects = await prisma.project.findMany({
-                                orderBy: {
-                                    title: 'asc',
-                                },
-                            })
-                        } else if (filter === "sort-by-name-desc") {
-                            projects = await prisma.project.findMany({
-                                orderBy: {
-                                    title: 'desc',
-                                },
-                            })
-                        } else if (filter === "sort-by-created-asc") {
-                            projects = await prisma.project.findMany({
-                                orderBy: {
-                                    creationTime: 'asc',
-                                },
-                            })
-                        } else if (filter === "sort-by-created-desc") {
-                            projects = await prisma.project.findMany({
-                                orderBy: {
-                                    creationTime: 'desc',
-                                },
-                            })
-                        } else {
-                            projects = await prisma.project.findMany()
-                        }
-                        await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
-                            .then(response => {
-                                res.send({
-                                    totalProjectCount: projectsCount,
-                                    filteredProjects: response
-                                })
-                            })
-                    } catch(error) {
-                        console.log(error.message)
-                        res.set({
-                            notificationTitle: "Network Error",
-                            notificationDescription: "There were some issues connecting with the server. Please try again after sometimes."
-                        })
-                        console.log('first')
-                        return res.status(500).end()
+                    const maxPageNumberCount = Math.ceil(projectsCount / normalGivingCount)
+                    if (startingProjectIndex >= maxPageNumberCount) {
+                        startingProjectIndex = maxPageNumberCount - 1
+                    } else if (startingProjectIndex < 0) {
+                        startingProjectIndex = 0
                     }
                 }
-            })
+                await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
+                    .then(response => {
+                        res.send({
+                            totalProjectCount: projectsCount,
+                            filteredProjects: response
+                        })
+                    })
+            } catch(error) {
+                console.log(error.message)
+                res.set({
+                    notificationTitle: "Network Error",
+                    notificationDescription: "There were some issues connecting with the server. Please try again after sometimes."
+                })
+                console.log('first')
+                return res.status(500).end()
+            }
+            // }
         } catch(error) {
             res.set({
                 notificationTitle: "Network Error",
