@@ -15,6 +15,8 @@ const filterTheProjects = async (/** @type {number} */ startingProjectIndex, /**
 
 projectRouter.get('/', async (req, res) => {
 
+    console.log(req.query)
+
     let startingProjectIndex = 0
     let normalGivingCount = 6
     
