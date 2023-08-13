@@ -55,8 +55,9 @@ projectRouter.get('/', async (req, res) => {
         normalGivingCount = 6
     } finally {
         try {
-            const projectsCount = await prisma.project.count()
-            if (projectsCount) {
+            await prisma.project.count().then(async (response) => {
+                const projectsCount = response
+                console.log(projectsCount)
                 if (projectsCount < 1) {
                     res.set({
                         notificationTitle: "No Projects Found",
@@ -129,10 +130,7 @@ projectRouter.get('/', async (req, res) => {
                         return res.status(500).end()
                     }
                 }
-            } else {
-                console.log(projectsCount)
-                console.log('third')
-            }
+            })
         } catch(error) {
             res.set({
                 notificationTitle: "Network Error",
