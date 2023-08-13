@@ -23,11 +23,19 @@ projectRouter.get('/', async (req, res) => {
     
     try {
 
-        const projects = await prisma.project.findMany()
-        await res.send({
-            totalProjectCount: projects.length,
-            filteredProjects: projects
-        })
+        prisma.project.findMany()
+            .then(response => {    
+                return res.send({
+                    totalProjectCount: response.length,
+                    filteredProjects: response
+                })
+            }).catch(error => {
+                console.log(error)
+                console.log()
+                console.log(error.message)
+
+                return res.status(409).end()
+            })
 
 
     //     // let queryStartingPageNumber = req.query.startingPageNumber
@@ -415,6 +423,8 @@ projectRouter.put('/update', async (req, res) => {
                 notificationTitle: "Network Issue",
                 notificationDescription: "Please try again after sometimes. There seems to be some issue with the network connection."
             })
+            return res.status(500).end()
+
         }
         
     } else {
