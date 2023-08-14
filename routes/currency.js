@@ -12,9 +12,14 @@ currencyRouter.get('/', async (req, res) => {
     try {
         const currencies = await prisma.currency.findFirst()
         if (currencies) {
-            if (currencies.expiredAt > new Date) {
+            const currentTime = new Date
+            console.log(currentTime)
+            console.log(currencies.expiredAt)
+            if (currencies.expiredAt > currentTime) {
+                console.log('first 16')
                 res.send(currencies)
             } else {
+                console.log('first 19')
                 const currencyInfo = await axios.get(
                     `${process.env.CURRENCY_EXCHANGE_URL}`,
                     {
@@ -24,7 +29,7 @@ currencyRouter.get('/', async (req, res) => {
                     }
                 )
 
-                if (currencyInfo["success"]) {
+                if (currencyInfo.data["success"]) {
 
                     await prisma.currency.deleteMany().then(
                         async () => {
@@ -34,8 +39,8 @@ currencyRouter.get('/', async (req, res) => {
                                     "baseTime": new Date,
                                     "expirationTimeInMinutes": dbTTL,
                                     "expiredAt": new Date(new Date().getTime() + dbTTL * 60000),
-                                    "baseCurrency": currencyInfo["base"],
-                                    "convertionRates": currencyInfo["rates"]
+                                    "baseCurrency": currencyInfo.data["base"],
+                                    "convertionRates": currencyInfo.data["rates"]
                                 }
                             })
                             if (newCurrenciesinDB) {
