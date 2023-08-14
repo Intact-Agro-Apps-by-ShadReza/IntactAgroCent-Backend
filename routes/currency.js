@@ -12,11 +12,8 @@ currencyRouter.get('/', async (req, res) => {
     try {
         const currencies = await prisma.currency.findFirst()
         if (currencies) {
-            const currentTime = new Date
-            const expirationTime = new Date(currencies.expiredAt)
-            console.log(currentTime)
-            console.log(expirationTime)
-            if (currencies.expiredAt > currentTime) {
+            const currentTime = new Date()
+            if (new Date(currencies.expiredAt.toLocaleString()) > new Date(currentTime.toLocaleString())) {
                 console.log('first 16')
                 res.send(currencies)
             } else {
