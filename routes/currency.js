@@ -16,7 +16,7 @@ currencyRouter.get('/', async (req, res) => {
                 res.send(currencies)
             } else {
                 const currencyInfo = await axios.get(
-                    `http://api.exchangeratesapi.io/v1/latest`,
+                    `${process.env.CURRENCY_EXCHANGE_URL}`,
                     {
                         params: {
                             access_key: process.env.CURRENCY_EXCHANGE_ACCESS_KEY
@@ -59,7 +59,7 @@ currencyRouter.get('/', async (req, res) => {
             }
         } else {
             const currencyInfo = await axios.get(
-                `http://api.exchangeratesapi.io/v1/latest`,
+                `${process.env.CURRENCY_EXCHANGE_URL}`,
                 {
                     params: {
                         access_key: process.env.CURRENCY_EXCHANGE_ACCESS_KEY
