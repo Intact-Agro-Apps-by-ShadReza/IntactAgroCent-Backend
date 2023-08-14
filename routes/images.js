@@ -40,7 +40,8 @@ imageRouter.post('/create', async (req, res) => {
             } else {
                 const createdimage = await prisma.image.create({
                     data: {
-                        liveLink: liveLink
+                        liveLink: liveLink,
+                        creationTime: new Date()
                     }
                 })
                 if (createdimage) {

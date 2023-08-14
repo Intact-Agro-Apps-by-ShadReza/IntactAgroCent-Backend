@@ -43,7 +43,8 @@ tagRouter.post('/create', async (req, res) => {
                     data: {
                         title: title,
                         description: description,
-                        applicableFor: applicableFor
+                        applicableFor: applicableFor,
+                        creationTime: new Date()
                     }
                 })
                 if (createdtag) {
