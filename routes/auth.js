@@ -70,7 +70,7 @@ authRouter.post('/forgotPassword', async (req, res) => {
                 const currentTime = new Date()
 
                 if (verificationCodeForMail) {
-                    if (currentTime <= verificationCodeForMail.expiredAt) {
+                    if (new Date(currentTime.toLocaleString()) <= new Date(verificationCodeForMail.expiredAt.toLocaleString())) {
                         res.statusMessage = "A verification code is already sitting in your mail. Please verify first."
                         return res.status(201).end("A verification code is already sitting in your mail. Please verify first.")
                     }
@@ -259,7 +259,7 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
 
             if (verificationCodeForMail) {
                 const currentTime = new Date()
-                if (currentTime <= verificationCodeForMail.expiredAt) {
+                if (new Date(currentTime.toLocaleString()) <= new Date(verificationCodeForMail.expiredAt.toLocaleString())) {
                     res.statusMessage = "A verification code is already sitting in your mail. Please verify first."
                     return res.status(201).end("A verification code is already sitting in your mail. Please verify first.")
                 } else {
@@ -363,7 +363,7 @@ authRouter.post('/verifyMail', async (req, res) => {
                     emailId: foundTheEmail.id
                 }
             })
-            if (verificationCodeOfMail && (verificationCodeOfMail.expiredAt >= new Date())) {
+            if (verificationCodeOfMail && (new Date(new Date().toLocaleString()) <= new Date(verificationCodeOfMail.expiredAt.toLocaleString()))) {
                 if (verificationCodeOfMail.verificationCode === verificationCode) {
                     const verifyTheMail = await prisma.registeredMail.update({
                         where: {
@@ -438,7 +438,7 @@ authRouter.post('/verifyPasswordReset', async (req, res) => {
                     emailId: foundTheEmail.id
                 }
             })
-            if (foundTheEmail.emailVerified && verificationCodeOfMail && (verificationCodeOfMail.expiredAt >= new Date())) {
+            if (foundTheEmail.emailVerified && verificationCodeOfMail && (new Date(new Date().toLocaleString()) <= new Date(verificationCodeOfMail.expiredAt.toLocaleString()))) {
                 const encryptedPassowrd = await Encrypt.cryptPassword(password)
                 if (verificationCodeOfMail.verificationCode === verificationCode) {
                     const verifyTheMail = await prisma.registeredMail.update({
@@ -557,7 +557,7 @@ authRouter.post('/register', async (req, res) => {
 
                 if (verificationCodeForMail) {
                     const currentTime = new Date()
-                    if (currentTime >= verificationCodeForMail.expiredAt) {
+                    if (new Date(currentTime.toLocaleString()) <= new Date(verificationCodeForMail.expiredAt.toLocaleString())) {
                         res.statusMessage = "A verification code is already sitting in your mail. Please verify first."
                         return res.status(201).end("A verification code is already sitting in your mail. Please verify first.")
                     } else {
