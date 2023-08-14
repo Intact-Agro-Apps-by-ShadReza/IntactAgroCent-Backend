@@ -11,7 +11,7 @@ currencyRouter.get('/', async (req, res) => {
     
     try {
         const currencies = await prisma.currency.findFirst()
-        if (currencies) {   
+        if (currencies) {
             if (currencies.expiredAt > new Date) {
                 res.send(currencies)
             } else {
@@ -25,29 +25,41 @@ currencyRouter.get('/', async (req, res) => {
                 )
 
                 if (currencyInfo["success"]) {
-                    // console.log('success 1')
 
-                    const dbTTL = 24*60
-                    const newCurrenciesinDB = await prisma.currency.create({
-                        data: {
-                            "baseTime": new Date,
-                            "expirationTimeInMinutes": dbTTL,
-                            "expiredAt": new Date(new Date().getTime() + dbTTL * 60000),
-                            "baseCurrency": currencyInfo["base"],
-                            "convertionRates": currencyInfo["rates"]
+                    await prisma.currency.deleteMany().then(
+                        async () => {
+                            const dbTTL = 24*60
+                            const newCurrenciesinDB = await prisma.currency.create({
+                                data: {
+                                    "baseTime": new Date,
+                                    "expirationTimeInMinutes": dbTTL,
+                                    "expiredAt": new Date(new Date().getTime() + dbTTL * 60000),
+                                    "baseCurrency": currencyInfo["base"],
+                                    "convertionRates": currencyInfo["rates"]
+                                }
+                            })
+                            if (newCurrenciesinDB) {
+                                res.send(newCurrenciesinDB)
+                            } else {
+                                console.log('failure 11')
+
+                                res.set({
+                                    notificationTitle: "Network Error",
+                                    notificationDescription: "There was a problem talking with the external server."
+                                })
+                                return res.status(500).end()
+                            }
                         }
-                    })
-                    if (newCurrenciesinDB) {
-                        res.send(newCurrenciesinDB)
-                    } else {
-                        console.log('failure 11')
-
+                    ).catch((error) => {
+                        console.log(error.message)
                         res.set({
                             notificationTitle: "Network Error",
                             notificationDescription: "There was a problem talking with the external server."
                         })
                         return res.status(500).end()
-                    }
+                    })
+
+                    
                 } else {
                     console.log('failure 12')
                     res.set({
