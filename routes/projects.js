@@ -180,7 +180,8 @@ projectRouter.post('/create', async (req, res) => {
                         pictureIds: {set: pictureIds},
                         tagIds: {set: tagIds},
                         projectStatus: projectStatus,
-                        location: location
+                        location: location,
+                        creationTime: new Date()
                     }
                 })
                 if (createdProject) {
@@ -265,7 +266,8 @@ projectRouter.put('/update', async (req, res) => {
                             pictureIds: {set: newProject.pictureIds},
                             tagIds: {set: newProject.tagIds},
                             projectStatus: newProject.projectStatus,
-                            location: newProject.location
+                            location: newProject.location,
+                            creationTime: new Date()
                         }
                     })
                     if (updatedProject) {
