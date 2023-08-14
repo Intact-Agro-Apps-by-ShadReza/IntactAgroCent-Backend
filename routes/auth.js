@@ -70,7 +70,7 @@ authRouter.post('/forgotPassword', async (req, res) => {
                 const currentTime = new Date()
 
                 if (verificationCodeForMail) {
-                    if (new Date(currentTime.toLocaleString()) <= new Date(verificationCodeForMail.expiredAt.toLocaleString())) {
+                    if (currentTime <= verificationCodeForMail.expiredAt) {
                         res.statusMessage = "A verification code is already sitting in your mail. Please verify first."
                         return res.status(201).end("A verification code is already sitting in your mail. Please verify first.")
                     }
@@ -87,7 +87,7 @@ authRouter.post('/forgotPassword', async (req, res) => {
                         emailId: foundTheEmail.id,
                         expirationTimeInMinutes: codeTTLInMinutes,
                         expiredAt: new Date(new Date().getTime() + codeTTLInMinutes * 60000),
-                        creationTime: new Date()
+                        creationTime: new Date
                     }
                 })
 
@@ -259,7 +259,7 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
 
             if (verificationCodeForMail) {
                 const currentTime = new Date()
-                if (new Date(currentTime.toLocaleString()) <= new Date(verificationCodeForMail.expiredAt.toLocaleString())) {
+                if (currentTime <= verificationCodeForMail.expiredAt) {
                     res.statusMessage = "A verification code is already sitting in your mail. Please verify first."
                     return res.status(201).end("A verification code is already sitting in your mail. Please verify first.")
                 } else {
@@ -276,7 +276,7 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
                             emailId: foundTheEmail.id,
                             expirationTimeInMinutes: codeTTLInMinutes,
                             expiredAt: new Date(new Date().getTime() + codeTTLInMinutes * 60000),
-                            creationTime: new Date()
+                            creationTime: new Date
                         }
                     })
 
@@ -363,14 +363,14 @@ authRouter.post('/verifyMail', async (req, res) => {
                     emailId: foundTheEmail.id
                 }
             })
-            if (verificationCodeOfMail && (new Date(new Date().toLocaleString()) <= new Date(verificationCodeOfMail.expiredAt.toLocaleString()))) {
+            if (verificationCodeOfMail && (verificationCodeOfMail.expiredAt >= new Date())) {
                 if (verificationCodeOfMail.verificationCode === verificationCode) {
                     const verifyTheMail = await prisma.registeredMail.update({
                         where: {
                             email: foundTheEmail.email,
                         },
                         data: {
-                            emailVerified: true,
+                            emailVerified: true
                         }
                     })
                     
@@ -438,7 +438,7 @@ authRouter.post('/verifyPasswordReset', async (req, res) => {
                     emailId: foundTheEmail.id
                 }
             })
-            if (foundTheEmail.emailVerified && verificationCodeOfMail && (new Date(new Date().toLocaleString()) <= new Date(verificationCodeOfMail.expiredAt.toLocaleString()))) {
+            if (foundTheEmail.emailVerified && verificationCodeOfMail && (verificationCodeOfMail.expiredAt >= new Date())) {
                 const encryptedPassowrd = await Encrypt.cryptPassword(password)
                 if (verificationCodeOfMail.verificationCode === verificationCode) {
                     const verifyTheMail = await prisma.registeredMail.update({
@@ -524,7 +524,7 @@ authRouter.post('/register', async (req, res) => {
                     email: email,         
                     password: encryptedPassowrd,         
                     emailVerified: false,
-                    creationTime: new Date()
+                    creationTime: new Date
                 }
             })
             
@@ -557,7 +557,7 @@ authRouter.post('/register', async (req, res) => {
 
                 if (verificationCodeForMail) {
                     const currentTime = new Date()
-                    if (new Date(currentTime.toLocaleString()) <= new Date(verificationCodeForMail.expiredAt.toLocaleString())) {
+                    if (currentTime >= verificationCodeForMail.expiredAt) {
                         res.statusMessage = "A verification code is already sitting in your mail. Please verify first."
                         return res.status(201).end("A verification code is already sitting in your mail. Please verify first.")
                     } else {
@@ -573,8 +573,8 @@ authRouter.post('/register', async (req, res) => {
                                 verificationCode: generatedOTP,
                                 emailId: registeredMail.id,
                                 expirationTimeInMinutes: codeTTLInMinutes,
-                                expiredAt: new Date(new Date().getTime() + codeTTLInMinutes * 60000),
-                                creationTime: new Date()
+                                expiredAt: new Date(new Date().getTime() + codeTTLInMinutes*60000),
+                                creationTime: new Date
                             }
                         })
 
@@ -619,8 +619,8 @@ authRouter.post('/register', async (req, res) => {
                             verificationCode: generatedOTP,
                             emailId: registeredMail.id,
                             expirationTimeInMinutes: codeTTLInMinutes,
-                            expiredAt: new Date(new Date().getTime() + codeTTLInMinutes * 60000),
-                            creationTime: new Date()
+                            expiredAt: new Date(new Date().getTime() + codeTTLInMinutes*60000),
+                            creationTime: new Date
                         }
                     })
 
