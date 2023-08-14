@@ -87,6 +87,7 @@ authRouter.post('/forgotPassword', async (req, res) => {
                         emailId: foundTheEmail.id,
                         expirationTimeInMinutes: codeTTLInMinutes,
                         expiredAt: new Date(new Date().getTime() + codeTTLInMinutes * 60000),
+                        creationTime: new Date()
                     }
                 })
 
@@ -275,6 +276,7 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
                             emailId: foundTheEmail.id,
                             expirationTimeInMinutes: codeTTLInMinutes,
                             expiredAt: new Date(new Date().getTime() + codeTTLInMinutes * 60000),
+                            creationTime: new Date()
                         }
                     })
 
@@ -368,7 +370,7 @@ authRouter.post('/verifyMail', async (req, res) => {
                             email: foundTheEmail.email,
                         },
                         data: {
-                            emailVerified: true
+                            emailVerified: true,
                         }
                     })
                     
@@ -521,7 +523,8 @@ authRouter.post('/register', async (req, res) => {
                 data: {
                     email: email,         
                     password: encryptedPassowrd,         
-                    emailVerified: false
+                    emailVerified: false,
+                    creationTime: new Date()
                 }
             })
             
@@ -570,7 +573,8 @@ authRouter.post('/register', async (req, res) => {
                                 verificationCode: generatedOTP,
                                 emailId: registeredMail.id,
                                 expirationTimeInMinutes: codeTTLInMinutes,
-                                expiredAt: new Date(new Date().getTime() + codeTTLInMinutes*60000),
+                                expiredAt: new Date(new Date().getTime() + codeTTLInMinutes * 60000),
+                                creationTime: new Date()
                             }
                         })
 
@@ -615,7 +619,8 @@ authRouter.post('/register', async (req, res) => {
                             verificationCode: generatedOTP,
                             emailId: registeredMail.id,
                             expirationTimeInMinutes: codeTTLInMinutes,
-                            expiredAt: new Date(new Date().getTime() + codeTTLInMinutes*60000),
+                            expiredAt: new Date(new Date().getTime() + codeTTLInMinutes * 60000),
+                            creationTime: new Date()
                         }
                     })
 
