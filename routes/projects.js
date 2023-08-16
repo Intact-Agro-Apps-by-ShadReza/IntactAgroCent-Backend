@@ -13,7 +13,9 @@ const filterTheProjects = async (startingProjectIndex, normalGivingCount, totalP
         lastIndex = totalProjectsCount
     }
     for (let i = startingProjectIndex; i < lastIndex; i++) {
-        filteredProjects.push(projects[i])
+        if (projects[i]) {
+            filteredProjects.push(projects[i])
+        }
     }
     return filteredProjects
 }
@@ -110,6 +112,60 @@ projectRouter.get('/', async (req, res) => {
                         projects = await prisma.project.findMany({
                             orderBy: {
                                 creationTime: 'desc',
+                            },
+                        })
+                    }  else if (filter === "sort-by-investment-per-unit-asc") {
+                        projects = await prisma.project.findMany({
+                            orderBy: {
+                                investingCapitalPerUnitinBDT: 'asc',
+                            },
+                        })
+                    }  else if (filter === "sort-by-investment-per-unit-desc") {
+                        projects = await prisma.project.findMany({
+                            orderBy: {
+                                investingCapitalPerUnitinBDT: 'desc',
+                            },
+                        })
+                    } else if (filter === "sort-by-roi-asc") {
+                        projects = await prisma.project.findMany({
+                            orderBy: {
+                                returnOnInterestRate: 'asc',
+                            },
+                        })
+                    } else if (filter === "sort-by-roi-desc") {
+                        projects = await prisma.project.findMany({
+                            orderBy: {
+                                returnOnInterestRate: 'desc',
+                            },
+                        })
+                    } else if (filter === "sort-by-roi-time-asc") {
+                        projects = await prisma.project.findMany({
+                            orderBy: {
+                                returnOnInterestReturnPeriodinMonths: 'asc',
+                            },
+                        })
+                    } else if (filter === "sort-by-roi-time-desc") {
+                        projects = await prisma.project.findMany({
+                            orderBy: {
+                                returnOnInterestReturnPeriodinMonths: 'desc',
+                            },
+                        })
+                    } else if (filter === "sort-by-live") {
+                        projects = await prisma.project.findMany({
+                            where: {
+                                projectStatus: 'live',
+                            },
+                        })
+                    } else if (filter === "sort-by-at-halt") {
+                        projects = await prisma.project.findMany({
+                            where: {
+                                projectStatus: 'at-halt',
+                            },
+                        })
+                    } else if (filter === "sort-by-closed") {
+                        projects = await prisma.project.findMany({
+                            where: {
+                                projectStatus: 'closed',
                             },
                         })
                     } else {
