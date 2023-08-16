@@ -11,10 +11,15 @@ currencyRouter.get('/', async (req, res) => {
     
     try {
         const currencies = await prisma.currency.findFirst()
-        if (currencies) {   
-            if (currencies.expiredAt > new Date) {
+        if (currencies) {
+            const currentTime = new Date
+            console.log(currentTime)
+            console.log(currencies.expiredAt)
+            if (currencies.expiredAt > currentTime) {
+                console.log('first 16')
                 res.send(currencies)
             } else {
+                console.log('first 19')
                 const currencyInfo = await axios.get(
                     `${process.env.CURRENCY_EXCHANGE_URL}`,
                     {
@@ -24,30 +29,43 @@ currencyRouter.get('/', async (req, res) => {
                     }
                 )
 
-                if (currencyInfo["success"]) {
-                    // console.log('success 1')
+                if (currencyInfo.data["success"]) {
 
-                    const dbTTL = 24*60
-                    const newCurrenciesinDB = await prisma.currency.create({
-                        data: {
-                            "baseTime": new Date,
-                            "expirationTimeInMinutes": dbTTL,
-                            "expiredAt": new Date(new Date().getTime() + dbTTL * 60000),
-                            "baseCurrency": currencyInfo["base"],
-                            "convertionRates": currencyInfo["rates"]
+                    await prisma.currency.deleteMany().then(
+                        async () => {
+                            const dbTTL = 24*60
+                            const newCurrenciesinDB = await prisma.currency.create({
+                                data: {
+                                    "baseTime": new Date,
+                                    "expirationTimeInMinutes": dbTTL,
+                                    "expiredAt": new Date(new Date().getTime() + dbTTL * 60000),
+                                    "baseCurrency": currencyInfo.data["base"],
+                                    "convertionRates": currencyInfo.data["rates"],
+                                    "creationTime": new Date
+                                }
+                            })
+                            if (newCurrenciesinDB) {
+                                res.send(newCurrenciesinDB)
+                            } else {
+                                console.log('failure 11')
+
+                                res.set({
+                                    notificationTitle: "Network Error",
+                                    notificationDescription: "There was a problem talking with the external server."
+                                })
+                                return res.status(500).end()
+                            }
                         }
-                    })
-                    if (newCurrenciesinDB) {
-                        res.send(newCurrenciesinDB)
-                    } else {
-                        console.log('failure 11')
-
+                    ).catch((error) => {
+                        console.log(error.message)
                         res.set({
                             notificationTitle: "Network Error",
                             notificationDescription: "There was a problem talking with the external server."
                         })
                         return res.status(500).end()
-                    }
+                    })
+
+                    
                 } else {
                     console.log('failure 12')
                     res.set({
@@ -76,7 +94,8 @@ currencyRouter.get('/', async (req, res) => {
                         "expirationTimeInMinutes": dbTTL,
                         "expiredAt": new Date(new Date().getTime() + dbTTL * 60000),
                         "baseCurrency": currencyInfo.data.base,
-                        "convertionRates": currencyInfo.data.rates
+                        "convertionRates": currencyInfo.data.rates,
+                        "creationTime": new Date
                     }
                 })
                 if (newCurrenciesinDB) {

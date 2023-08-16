@@ -87,6 +87,7 @@ authRouter.post('/forgotPassword', async (req, res) => {
                         emailId: foundTheEmail.id,
                         expirationTimeInMinutes: codeTTLInMinutes,
                         expiredAt: new Date(new Date().getTime() + codeTTLInMinutes * 60000),
+                        creationTime: new Date
                     }
                 })
 
@@ -275,6 +276,7 @@ authRouter.post('/resendVerificationCode', async (req, res) => {
                             emailId: foundTheEmail.id,
                             expirationTimeInMinutes: codeTTLInMinutes,
                             expiredAt: new Date(new Date().getTime() + codeTTLInMinutes * 60000),
+                            creationTime: new Date
                         }
                     })
 
@@ -521,7 +523,8 @@ authRouter.post('/register', async (req, res) => {
                 data: {
                     email: email,         
                     password: encryptedPassowrd,         
-                    emailVerified: false
+                    emailVerified: false,
+                    creationTime: new Date
                 }
             })
             
@@ -571,6 +574,7 @@ authRouter.post('/register', async (req, res) => {
                                 emailId: registeredMail.id,
                                 expirationTimeInMinutes: codeTTLInMinutes,
                                 expiredAt: new Date(new Date().getTime() + codeTTLInMinutes*60000),
+                                creationTime: new Date
                             }
                         })
 
@@ -616,6 +620,7 @@ authRouter.post('/register', async (req, res) => {
                             emailId: registeredMail.id,
                             expirationTimeInMinutes: codeTTLInMinutes,
                             expiredAt: new Date(new Date().getTime() + codeTTLInMinutes*60000),
+                            creationTime: new Date
                         }
                     })
 

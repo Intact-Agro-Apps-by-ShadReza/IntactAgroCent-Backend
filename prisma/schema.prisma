@@ -15,7 +15,7 @@ model RegisteredMail {
   email         String   @unique
   password      String
   emailVerified Boolean
-  creationTime  DateTime @default(now())
+  creationTime  DateTime
 }
 
 model MailVerificationCode {
@@ -24,7 +24,7 @@ model MailVerificationCode {
   expirationTimeInMinutes Int
   expiredAt               DateTime
   emailId                 String   @unique
-  creationTime            DateTime @default(now())
+  creationTime            DateTime
 }
 
 model Project {
@@ -39,13 +39,13 @@ model Project {
   tagIds                               String[]
   projectStatus                        String
   location                             String
-  creationTime                         DateTime @default(now())
+  creationTime                         DateTime
 }
 
 model Image {
   id           String   @id @unique @default(uuid())
   liveLink     String
-  creationTime DateTime @default(now())
+  creationTime DateTime
 }
 
 model Tag {
@@ -53,12 +53,12 @@ model Tag {
   title         String
   description   String
   applicableFor String
-  creationTime  DateTime @default(now())
+  creationTime  DateTime
 }
 
 model Currency {
   id                      String   @id @unique @default(uuid())
-  creationTime            DateTime @default(now())
+  creationTime            DateTime
   baseTime                DateTime
   expirationTimeInMinutes Int
   expiredAt               DateTime
