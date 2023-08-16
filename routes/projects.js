@@ -5,9 +5,14 @@ const projectRouter = Router()
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
-const filterTheProjects = async (/** @type {number} */ startingProjectIndex, /** @type {number} */ normalGivingCount, /** @type {any[]} */ projects) => {
+const filterTheProjects = async (startingProjectIndex, normalGivingCount, totalProjectsCount, projects) => {
+
     let filteredProjects = []
-    for (let i = startingProjectIndex; i < startingProjectIndex+normalGivingCount; i++) {
+    let lastIndex = startingProjectIndex + normalGivingCount
+    if (lastIndex > totalProjectsCount) {
+        lastIndex = totalProjectsCount
+    }
+    for (let i = startingProjectIndex; i < lastIndex; i++) {
         filteredProjects.push(projects[i])
     }
     return filteredProjects
@@ -52,6 +57,7 @@ projectRouter.get('/', async (req, res) => {
         startingProjectIndex = 0
         normalGivingCount = 6
     } finally {
+
         try {
             const projectsCount = await prisma.project.count()
             if (projectsCount < 1) {
@@ -65,12 +71,12 @@ projectRouter.get('/', async (req, res) => {
                     normalGivingCount = projectsCount
                     startingProjectIndex = 0
                 } else {
+
                     if (normalGivingCount < 1) {
                         normalGivingCount = 1
                     }
-                    const maxPageNumberCount = Math.ceil(projectsCount / normalGivingCount)
-                    if (startingProjectIndex >= maxPageNumberCount) {
-                        startingProjectIndex = maxPageNumberCount - 1
+                    if ((startingProjectIndex >= projectsCount)) {
+                        startingProjectIndex = projectsCount - 1
                     } else if (startingProjectIndex < 0) {
                         startingProjectIndex = 0
                     }
@@ -109,7 +115,9 @@ projectRouter.get('/', async (req, res) => {
                     } else {
                         projects = await prisma.project.findMany()
                     }
-                    await filterTheProjects(startingProjectIndex, normalGivingCount, projects)
+
+
+                    await filterTheProjects(startingProjectIndex, normalGivingCount, projectsCount, projects)
                         .then(response => {
                             res.send({
                                 totalProjectCount: projectsCount,
