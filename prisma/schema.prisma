@@ -34,9 +34,9 @@ model Project {
   investingCapitalPerUnitinBDT         Float
   returnOnInterestRate                 Float
   returnOnInterestReturnPeriodinMonths Int
-  featuredPictureId                    String
-  pictureIds                           String[]
-  tagIds                               String[]
+  featuredPictureLink                  String
+  pictureLinks                         String[]
+  tagNames                             String[]
   projectStatus                        String
   location                             String
   creationTime                         DateTime
