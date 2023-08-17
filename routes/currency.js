@@ -13,13 +13,9 @@ currencyRouter.get('/', async (req, res) => {
         const currencies = await prisma.currency.findFirst()
         if (currencies) {
             const currentTime = new Date
-            console.log(currentTime)
-            console.log(currencies.expiredAt)
             if (currencies.expiredAt > currentTime) {
-                console.log('first 16')
                 res.send(currencies)
             } else {
-                console.log('first 19')
                 const currencyInfo = await axios.get(
                     `${process.env.CURRENCY_EXCHANGE_URL}`,
                     {
