@@ -207,20 +207,20 @@ projectRouter.post('/create', async (req, res) => {
         investingCapitalPerUnitinBDT,
         returnOnInterestRate,
         returnOnInterestReturnPeriodinMonths,
-        featuredPictureId,
-        pictureIds,
-        tagIds,
+        featuredPictureLink,
+        pictureLinks,
+        tagNames,
         projectStatus,
         location } = req.body    
 
-    if (title && description && investingCapitalPerUnitinBDT && returnOnInterestRate && returnOnInterestReturnPeriodinMonths && featuredPictureId && pictureIds && pictureIds.length && tagIds.length && tagIds && projectStatus && location) {
+    if (title && description && investingCapitalPerUnitinBDT && returnOnInterestRate && returnOnInterestReturnPeriodinMonths && featuredPictureLink && pictureLinks && pictureLinks.length && tagNames.length && tagNames && projectStatus && location) {
         try {
 
             const sameConfiguredProject = await prisma.project.findFirst({
                 where: {
                     OR: [
                         { title: title },
-                        { featuredPictureId: featuredPictureId },
+                        { featuredPictureLink: featuredPictureLink },
                     ]
                 }
             })
@@ -240,9 +240,9 @@ projectRouter.post('/create', async (req, res) => {
                         investingCapitalPerUnitinBDT: investingCapitalPerUnitinBDT,
                         returnOnInterestRate: returnOnInterestRate,
                         returnOnInterestReturnPeriodinMonths: returnOnInterestReturnPeriodinMonths,
-                        featuredPictureId: featuredPictureId,
-                        pictureIds: {set: pictureIds},
-                        tagIds: {set: tagIds},
+                        featuredPictureLink: featuredPictureLink,
+                        pictureLinks: {set: pictureLinks},
+                        tagNames: {set: tagNames},
                         projectStatus: projectStatus,
                         location: location,
                         creationTime: new Date()
@@ -292,9 +292,9 @@ projectRouter.put('/update', async (req, res) => {
         newProject.investingCapitalPerUnitinBDT &&
         newProject.returnOnInterestRate &&
         newProject.returnOnInterestReturnPeriodinMonths &&
-        newProject.featuredPictureId &&
-        newProject.pictureIds &&
-        newProject.tagIds &&
+        newProject.featuredPictureLink &&
+        newProject.pictureLinks &&
+        newProject.tagNames &&
         newProject.projectStatus &&
         newProject.location
     ) {
@@ -303,7 +303,7 @@ projectRouter.put('/update', async (req, res) => {
                 where: {
                     OR: [
                         { title: newProject.title },
-                        { featuredPictureId: newProject.featuredPictureId },
+                        { featuredPictureLink: newProject.featuredPictureLink },
                     ]
                 }
             })
@@ -326,9 +326,9 @@ projectRouter.put('/update', async (req, res) => {
                             investingCapitalPerUnitinBDT: newProject.investingCapitalPerUnitinBDT,
                             returnOnInterestRate: newProject.returnOnInterestRate,
                             returnOnInterestReturnPeriodinMonths: newProject.returnOnInterestReturnPeriodinMonths,
-                            featuredPictureId: newProject.featuredPictureId,
-                            pictureIds: {set: newProject.pictureIds},
-                            tagIds: {set: newProject.tagIds},
+                            featuredPictureLink: newProject.featuredPictureLink,
+                            pictureLinks: {set: newProject.pictureLinks},
+                            tagNames: {set: newProject.tagNames},
                             projectStatus: newProject.projectStatus,
                             location: newProject.location,
                             creationTime: new Date()
