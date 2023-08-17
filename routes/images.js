@@ -20,9 +20,9 @@ imageRouter.get('/', async (req, res) => {
 })
 
 imageRouter.post('/create', async (req, res) => {
-    const { liveLink } = req.body    
+    const { liveLink, applicableFor } = req.body    
 
-    if (liveLink) {
+    if (liveLink && applicableFor) {
         try {
             const samelinkedimage = await prisma.image.findFirst({
                 where: {
@@ -41,6 +41,7 @@ imageRouter.post('/create', async (req, res) => {
                 const createdimage = await prisma.image.create({
                     data: {
                         liveLink: liveLink,
+                        applicableFor: applicableFor,
                         creationTime: new Date()
                     }
                 })

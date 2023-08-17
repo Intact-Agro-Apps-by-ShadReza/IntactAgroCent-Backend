@@ -43,9 +43,10 @@ model Project {
 }
 
 model Image {
-  id           String   @id @unique @default(uuid())
-  liveLink     String
-  creationTime DateTime
+  id            String   @id @unique @default(uuid())
+  liveLink      String
+  applicableFor String
+  creationTime  DateTime
 }
 
 model Tag {
