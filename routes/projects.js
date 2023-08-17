@@ -63,11 +63,8 @@ projectRouter.get('/', async (req, res) => {
         try {
             const projectsCount = await prisma.project.count()
             if (projectsCount < 1) {
-                res.set({
-                    notificationTitle: "No Projects Found",
-                    notificationDescription: "Currently there are no project enlisted."
-                })
-                return res.status(404).end()
+                    let notificationDescription = "Currently there are no project enlisted."
+                return res.status(404).end(notificationDescription)
             } else {
                 if (normalGivingCount >= projectsCount) {
                     normalGivingCount = projectsCount
@@ -182,19 +179,13 @@ projectRouter.get('/', async (req, res) => {
                         })
                 } catch(error) {
                     console.log(error.message)
-                    res.set({
-                        notificationTitle: "Network Error",
-                        notificationDescription: "There were some issues connecting with the server. Please try again after sometimes."
-                    })
-                    return res.status(500).end()
+                    let notificationDescription = "There were some issues connecting with the server. Please try again after sometimes."
+                    return res.status(500).end(notificationDescription)
                 }
             }
         } catch {
-            res.set({
-                notificationTitle: "Network Error",
-                notificationDescription: "There were some issues connecting with the server. Please try again after sometimes."
-            })
-            return res.status(500).end()
+            let notificationDescription = "There were some issues connecting with the server. Please try again after sometimes."
+            return res.status(500).end(notificationDescription)
         }
     }
 
@@ -227,11 +218,8 @@ projectRouter.post('/create', async (req, res) => {
 
             if (sameConfiguredProject) {
                 console.log('same configured project found')
-                res.set({
-                    notificationTitle: "Project Creation Unsuccessful",
-                    notificationDescription: "Another project is having the same configuration."
-                })
-                return res.status(406).end()
+                let notificationDescription = "Another project is having the same configuration."
+                return res.status(406).end(notificationDescription)
             } else {
                 const createdProject = await prisma.project.create({
                     data: {
@@ -250,36 +238,24 @@ projectRouter.post('/create', async (req, res) => {
                 })
                 if (createdProject) {
                     console.log('project created')
-                    res.set({
-                        notificationTitle: "Project Creation Successful",
-                        notificationDescription: "Project was created successfully."
-                    })
+                    let notificationDescription = "Project was created successfully."
                     res.send(createdProject)
                 } else {
                     console.log('project not created')
-                    res.set({
-                        notificationTitle: "Project Creation Unsuccessful",
-                        notificationDescription: "Project could not be created."
-                    })
-                    return res.status(406).end()
+                    let notificationDescription = "Project could not be created."
+                    return res.status(406).end(notificationDescription)
                 }
             }
 
         } catch (error) {
             console.log("project" + error.message)
-            res.set({
-                notificationTitle: "Project Creation Eror",
-                notificationDescription: "Project could not be created. Please try again after some times."
-            })
-            return res.status(500).end()
+            let notificationDescription = "Project could not be created. Please try again after some times."
+            return res.status(500).end(notificationDescription)
         }
     } else {
         console.log("project invalid params")
-        res.set({
-            notificationTitle: "Invalid Parameters",
-            notificationDescription: "Please provide all the parameters correctly."
-        })
-        return res.status(400).end()
+        let notificationDescription = "Please provide all the parameters correctly."
+        return res.status(400).end(notificationDescription)
     }
 })
 
@@ -309,11 +285,8 @@ projectRouter.put('/update', async (req, res) => {
             })
             if (conflictingProject) {
                 console.log("same project found with the updated title and application")
-                res.set({
-                    notificationTitle: "Conflicting Project Found",
-                    notificationDescription: "Same project exists where the title, feature image, status nad lovation are as the updated project"
-                })
-                return res.status(403).end()
+                let notificationDescription = "Same project exists where the title, feature image, status nad lovation are as the updated project"
+                return res.status(403).end(notificationDescription)
             } else {
                 try {
                     const updatedProject = await prisma.project.update({
@@ -339,36 +312,25 @@ projectRouter.put('/update', async (req, res) => {
                         res.send(updatedProject)
                     } else {
                         console.log("project could not be updated")
-                        res.set({
-                            notificationTitle: "Project Not Updated",
-                            notificationDescription: "Please try again after sometimes. Project was not updated."
-                        })
-                        return res.status(500).end()
+                        let notificationDescription = "Please try again after sometimes. Project was not updated."
+                        return res.status(500).end(notificationDescription)
                     }
                 } catch (error) {
                     console.log("project not found")
-                    res.set({
-                        notificationTitle: "Project not found",
-                        notificationDescription: "Please check if this project is there or not."
-                    })
-                    return res.status(403).end()
+                    let notificationDescription = "Please check if this project is there or not."
+                    return res.status(403).end(notificationDescription)
                 }
             }
         } catch (error) {
             console.log("project remains the same")
-            res.set({
-                notificationTitle: "Network Issue",
-                notificationDescription: "Please try again after sometimes. There seems to be some issue with the network connection."
-            })
+            let notificationDescription = "Please try again after sometimes. There seems to be some issue with the network connection."
+            return res.status(400).end(notificationDescription)
         }
         
     } else {
         console.log("project invalid params")
-        res.set({
-            notificationTitle: "Invalid Parameters for Updating",
-            notificationDescription: "Please provide correct id for the request."
-        })
-        return res.status(400).end()
+        let notificationDescription = "Please provide correct id for the request."
+        return res.status(400).end(notificationDescription)
     }
 
 })
