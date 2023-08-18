@@ -11,11 +11,8 @@ imageRouter.get('/', async (req, res) => {
         res.send(images)
     } catch (error) {
         console.log(error.message)
-        res.set({
-            notificationTitle: "Network Error",
-            notificationDescription: "There were some issues connecting with the server. Please try again after sometimes."
-        })
-        return res.status(500).end()
+        let notificationDescription = "There were some issues connecting with the server. Please try again after sometimes."
+        res.status(500).end(notificationDescription)
     }
 })
 
@@ -29,14 +26,10 @@ imageRouter.post('/create', async (req, res) => {
                     liveLink: liveLink
                 }
             })
-
             if (samelinkedimage) {
                 console.log('same linked image found')
-                res.set({
-                    notificationTitle: "Image Creation Unsuccessful",
-                    notificationDescription: "Another image is having the same link."
-                })
-                return res.status(406).end()
+                let notificationDescription = "Another image is having the same link in the database."
+                res.status(406).end(notificationDescription)
             } else {
                 const createdimage = await prisma.image.create({
                     data: {
@@ -47,36 +40,23 @@ imageRouter.post('/create', async (req, res) => {
                 })
                 if (createdimage) {
                     console.log('image created')
-                    res.set({
-                        notificationTitle: "Image Creation Successful",
-                        notificationDescription: "Image was created successfully."
-                    })
                     res.send(createdimage)
                 } else {
                     console.log('Image not created')
-                    res.set({
-                        notificationTitle: "Image Creation Unsuccessful",
-                        notificationDescription: "Image could not be created."
-                    })
-                    return res.status(406).end()
+                    let notificationDescription = "Image could not be created."
+                    res.status(406).end(notificationDescription)
                 }
             }
 
         } catch (error) {
             console.log("Image" + error.message)
-            res.set({
-                notificationTitle: "Image Creation Eror",
-                notificationDescription: "Image could not be created. Please try again after some times."
-            })
-            return res.status(500).end()
+            let notificationDescription = "Image could not be created. Please try again after some times."
+            res.status(500).end(notificationDescription)
         }
     } else {
         console.log("Image invalid params")
-        res.set({
-            notificationTitle: "Invalid Parameters",
-            notificationDescription: "Please provide all the parameters correctly."
-        })
-        return res.status(400).end()
+        let notificationDescription = "Please provide all the parameters correctly."
+        res.status(400).end(notificationDescription)
     }
 })
 
@@ -94,19 +74,13 @@ imageRouter.delete('/delete', async (req, res) => {
             res.send(deletedImage)
         } catch (error) {
             console.log("Image could not delete")
-            res.set({
-                notificationTitle: "Delete Unsuccessful",
-                notificationDescription: "Please check the credentials passed for the deletion."
-            })
-            return res.status(500).end()
+            let notificationDescription = "Please check the credentials passed for the deletion."
+            res.status(500).end(notificationDescription)
         }
     } else {
         console.log("Image invalid params")
-        res.set({
-            notificationTitle: "Invalid Parameters",
-            notificationDescription: "Please provide correct id for the request."
-        })
-        return res.status(400).end()
+        let notificationDescription = "Please provide correct id for the request."
+        res.status(400).end(notificationDescription)
     }
 })
 
