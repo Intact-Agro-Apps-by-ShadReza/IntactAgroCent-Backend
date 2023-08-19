@@ -206,7 +206,6 @@ projectRouter.post('/create', async (req, res) => {
 
     if (title && description && investingCapitalPerUnitinBDT && returnOnInterestRate && returnOnInterestReturnPeriodinMonths && featuredPictureLink && pictureLinks && pictureLinks.length && tagNames.length && tagNames && projectStatus && location) {
         try {
-
             const sameConfiguredProject = await prisma.project.findFirst({
                 where: {
                     OR: [
