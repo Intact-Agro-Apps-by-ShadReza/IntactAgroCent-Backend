@@ -20,6 +20,8 @@ const filterTheProjects = async (startingProjectIndex, normalGivingCount, totalP
     return filteredProjects
 }
 
+
+
 projectRouter.get('/', async (req, res) => {
 
     let startingProjectIndex = 0
@@ -191,6 +193,38 @@ projectRouter.get('/', async (req, res) => {
 
 })
 
+projectRouter.get('/:id', async (req, res) => {
+    try {
+        if (req.params.id) {
+            await prisma.project.findFirst({
+                where: {
+                    id: req.params.id,
+                }
+            }).then((response) => {
+                if(response) {
+                    return res.send(response)
+                } else {
+                    console.log('Invalid url')
+                    let notificationDescription = "Please correct the url. URL not valid."
+                    return res.status(404).end(notificationDescription)
+                }
+            }).catch((error) => {
+                console.log(error.message)
+                let notificationDescription = "Please correct the url."
+                return res.status(404).end(notificationDescription)
+            })
+        } else {
+            let notificationDescription = "Please pass a proper url."
+            return res.status(404).end(notificationDescription)
+        }
+        
+    } catch {
+        let notificationDescription = "There were some issues connecting with the server. Please try again after sometimes."
+        return res.status(500).end(notificationDescription)
+    }
+
+})
+
 projectRouter.post('/create', async (req, res) => {
     const {
         title,
@@ -217,7 +251,7 @@ projectRouter.post('/create', async (req, res) => {
 
             if (sameConfiguredProject) {
                 console.log('same configured project found')
-                let notificationDescription = "Another project is having the same configuration."
+                let notificationDescription = "Another project is having the same Title or Featured Image Link. Please have a close look."
                 return res.status(406).end(notificationDescription)
             } else {
                 const createdProject = await prisma.project.create({
