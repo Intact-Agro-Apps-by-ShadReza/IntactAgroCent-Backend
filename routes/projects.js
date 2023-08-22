@@ -316,7 +316,7 @@ projectRouter.put('/update', async (req, res) => {
                     ]
                 }
             })
-            if (conflictingProject && (conflictingProject.id !== projectId) && (conflictingProject.title !== newProject.title) && (conflictingProject.featuredPictureLink !== newProject.featuredPictureLink)) {
+            if (conflictingProject && (conflictingProject.id !== projectId) && ((conflictingProject.title === newProject.title) || (conflictingProject.featuredPictureLink === newProject.featuredPictureLink))) {
                 console.log("same project found with the updated title and application")
                 let notificationDescription = "Same project exists where the title, feature image, status and violation are as the updated project"
                 return res.status(403).end(notificationDescription)
