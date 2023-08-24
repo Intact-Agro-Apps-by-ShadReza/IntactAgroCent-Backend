@@ -368,6 +368,35 @@ projectRouter.put('/update', async (req, res) => {
 
 })
 
+projectRouter.post('/delete', async (req, res) => {
+    const { projectId } = req.body
+    if (!projectId) {
+        console.log("project invalid params")
+        let notificationDescription = "Please provide correct id for the request."
+        return res.status(403).end(notificationDescription)
+    }
+    try {
+        const deletedProject = await prisma.project.delete({
+            where: {
+                id: projectId
+            }
+        })
+        if (deletedProject) {
+            console.log("project deleted")
+            let notificationDescription = "Project was deleted."
+            return res.status(200).end(notificationDescription)
+        } else {
+            console.log("project not deleted")
+            let notificationDescription = "Project could not be deleted."
+            return res.status(500).end(notificationDescription)
+        }
+    } catch (error) {
+        console.log(error.message)
+        let notificationDescription = "Network Issue. Project could not be deleted."
+        return res.status(500).end(notificationDescription)
+    }
+})
+
 // have to add delete sectiion
 
 module.exports = projectRouter
