@@ -128,13 +128,13 @@ projectRouter.get('/', async (req, res) => {
                     } else if (filter === "sort-by-roi-asc") {
                         projects = await prisma.project.findMany({
                             orderBy: {
-                                returnOnInterestRate: 'asc',
+                                baseReturnOnInterestRate: 'asc',
                             },
                         })
                     } else if (filter === "sort-by-roi-desc") {
                         projects = await prisma.project.findMany({
                             orderBy: {
-                                returnOnInterestRate: 'desc',
+                                baseReturnOnInterestRate: 'desc',
                             },
                         })
                     } else if (filter === "sort-by-roi-time-asc") {
@@ -230,7 +230,8 @@ projectRouter.post('/create', async (req, res) => {
         title,
         description,
         investingCapitalPerUnitinBDT,
-        returnOnInterestRate,
+        baseReturnOnInterestRate,
+        topReturnOnInterestRate,
         returnOnInterestReturnPeriodinMonths,
         featuredPictureLink,
         pictureLinks,
@@ -238,7 +239,7 @@ projectRouter.post('/create', async (req, res) => {
         projectStatus,
         location } = req.body    
 
-    if (title && description && investingCapitalPerUnitinBDT && returnOnInterestRate && returnOnInterestReturnPeriodinMonths && featuredPictureLink && pictureLinks && pictureLinks.length && tagNames.length && tagNames && projectStatus && location) {
+    if (title && description && investingCapitalPerUnitinBDT && baseReturnOnInterestRate && topReturnOnInterestRate && returnOnInterestReturnPeriodinMonths && featuredPictureLink && pictureLinks && pictureLinks.length && tagNames.length && tagNames && projectStatus && location) {
         try {
             const sameConfiguredProject = await prisma.project.findFirst({
                 where: {
@@ -259,7 +260,8 @@ projectRouter.post('/create', async (req, res) => {
                         title: title,
                         description: description,
                         investingCapitalPerUnitinBDT: investingCapitalPerUnitinBDT,
-                        returnOnInterestRate: returnOnInterestRate,
+                        topReturnOnInterestRate: topReturnOnInterestRate,
+                        baseReturnOnInterestRate: baseReturnOnInterestRate,
                         returnOnInterestReturnPeriodinMonths: returnOnInterestReturnPeriodinMonths,
                         featuredPictureLink: featuredPictureLink,
                         pictureLinks: {set: pictureLinks},
@@ -299,7 +301,8 @@ projectRouter.put('/update', async (req, res) => {
         newProject.title &&
         newProject.description &&
         newProject.investingCapitalPerUnitinBDT &&
-        newProject.returnOnInterestRate &&
+        newProject.topReturnOnInterestRate &&
+        newProject.baseReturnOnInterestRate &&
         newProject.returnOnInterestReturnPeriodinMonths &&
         newProject.featuredPictureLink &&
         newProject.pictureLinks &&
@@ -330,7 +333,8 @@ projectRouter.put('/update', async (req, res) => {
                             title: newProject.title,
                             description: newProject.description,
                             investingCapitalPerUnitinBDT: newProject.investingCapitalPerUnitinBDT,
-                            returnOnInterestRate: newProject.returnOnInterestRate,
+                            baseReturnOnInterestRate: newProject.baseReturnOnInterestRate,
+                            topReturnOnInterestRate: newProject.topReturnOnInterestRate,
                             returnOnInterestReturnPeriodinMonths: newProject.returnOnInterestReturnPeriodinMonths,
                             featuredPictureLink: newProject.featuredPictureLink,
                             pictureLinks: {set: newProject.pictureLinks},
