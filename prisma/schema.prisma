@@ -32,7 +32,8 @@ model Project {
   title                                String
   description                          String
   investingCapitalPerUnitinBDT         Float
-  returnOnInterestRate                 Float
+  baseReturnOnInterestRate             Float
+  topReturnOnInterestRate              Float
   returnOnInterestReturnPeriodinMonths Int
   featuredPictureLink                  String
   pictureLinks                         String[]
