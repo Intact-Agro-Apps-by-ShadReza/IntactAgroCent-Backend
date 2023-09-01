@@ -240,6 +240,10 @@ projectRouter.post('/create', async (req, res) => {
         location } = req.body    
 
     if (title && description && investingCapitalPerUnitinBDT && baseReturnOnInterestRate && topReturnOnInterestRate && returnOnInterestReturnPeriodinMonths && featuredPictureLink && pictureLinks && pictureLinks.length && tagNames.length && tagNames && projectStatus && location) {
+        let topReturn = topReturnOnInterestRate
+        if (topReturnOnInterestRate < baseReturnOnInterestRate) {
+            topReturn = baseReturnOnInterestRate
+        }
         try {
             const sameConfiguredProject = await prisma.project.findFirst({
                 where: {
@@ -260,7 +264,7 @@ projectRouter.post('/create', async (req, res) => {
                         title: title,
                         description: description,
                         investingCapitalPerUnitinBDT: investingCapitalPerUnitinBDT,
-                        topReturnOnInterestRate: topReturnOnInterestRate,
+                        topReturnOnInterestRate: topReturn,
                         baseReturnOnInterestRate: baseReturnOnInterestRate,
                         returnOnInterestReturnPeriodinMonths: returnOnInterestReturnPeriodinMonths,
                         featuredPictureLink: featuredPictureLink,
@@ -310,6 +314,10 @@ projectRouter.put('/update', async (req, res) => {
         newProject.projectStatus &&
         newProject.location
     ) {
+        let topReturn = newProject.topReturnOnInterestRate
+        if (newProject.topReturnOnInterestRate < newProject.baseReturnOnInterestRate) {
+            topReturn = newProject.baseReturnOnInterestRate
+        }
         try {
             const conflictingProject = await prisma.project.findFirst({
                 where: {
@@ -334,7 +342,7 @@ projectRouter.put('/update', async (req, res) => {
                             description: newProject.description,
                             investingCapitalPerUnitinBDT: newProject.investingCapitalPerUnitinBDT,
                             baseReturnOnInterestRate: newProject.baseReturnOnInterestRate,
-                            topReturnOnInterestRate: newProject.topReturnOnInterestRate,
+                            topReturnOnInterestRate: topReturn,
                             returnOnInterestReturnPeriodinMonths: newProject.returnOnInterestReturnPeriodinMonths,
                             featuredPictureLink: newProject.featuredPictureLink,
                             pictureLinks: {set: newProject.pictureLinks},
