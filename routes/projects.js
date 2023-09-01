@@ -65,7 +65,7 @@ projectRouter.get('/', async (req, res) => {
         try {
             const projectsCount = await prisma.project.count()
             if (projectsCount < 1) {
-                    let notificationDescription = "Currently there are no project enlisted."
+                let notificationDescription = "Currently there are no project enlisted."
                 return res.status(404).end(notificationDescription)
             } else {
                 if (normalGivingCount >= projectsCount) {
