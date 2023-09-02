@@ -67,3 +67,19 @@ model Currency {
   baseCurrency            String
   convertionRates         Json
 }
+
+model User {
+  id                  String   @id @unique @default(uuid())
+  creationTime        DateTime
+  username            String
+  firstName           String
+  lastName            String?
+  email               String
+  phoneNumber         String
+  bankAccountNumber   String
+  nidCardFrontPicLink String
+  nidCardBackPicLink  String
+  address             String
+  country             String
+  dateOfBirth         DateTime
+}
