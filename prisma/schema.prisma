@@ -86,3 +86,79 @@ model User {
   country             String
   dateOfBirth         DateTime
 }
+
+model FeaturedProjects {
+  id                    String    @id @unique @default(uuid())
+  creationTime          DateTime
+  updationTime          DateTime?
+  featuredProjectsCount Int
+  projectsIdList        String[]
+}
+
+model TransactionCodes {
+  id           String    @id @unique @default(uuid())
+  creationTime DateTime
+  updationTime DateTime?
+  trxCode      String
+  trxName      String
+  createdById  String
+}
+
+model Transaction {
+  id                String   @id @unique @default(uuid())
+  creationTime      DateTime
+  transactionFromId String
+  transactionToId   String
+  transactionAmount Float
+  transactionStatus String
+}
+
+model ReferralOfferings {
+  id           String    @id @unique @default(uuid())
+  creationTime DateTime
+  updationTime DateTime?
+  referralName String
+  rewardType   String
+  rewardAmount Float
+}
+
+model Role {
+  id           String    @id @unique @default(uuid())
+  creationTime DateTime
+  updationTime DateTime?
+  roleName     String
+}
+
+model AdminPanel {
+  id           String    @id @unique @default(uuid())
+  creationTime DateTime
+  updationTime DateTime?
+  userId       String
+  RoleId       String
+}
+
+model NotificationShader {
+  id             String   @id @unique @default(uuid())
+  creationTime   DateTime
+  initiatedById  String
+  initiatedForId String
+  message        String
+}
+
+model WithdrawlRequest {
+  id              String   @id @unique @default(uuid())
+  processedTime   DateTime
+  initiatedById   String
+  withdrawlAmount Float
+  status          String
+  processedById   String
+}
+
+model TransactionMessage {
+  id                String   @id @unique @default(uuid())
+  sendingTime       DateTime
+  title             String
+  Description       String
+  transactionFromId String
+  transactionFromTo String
+}
