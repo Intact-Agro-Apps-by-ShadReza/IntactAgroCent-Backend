@@ -20,8 +20,6 @@ const filterTheProjects = async (startingProjectIndex, normalGivingCount, totalP
     return filteredProjects
 }
 
-
-
 projectRouter.get('/', async (req, res) => {
 
     let startingProjectIndex = 0
@@ -271,7 +269,8 @@ projectRouter.post('/create', async (req, res) => {
                         tagNames: {set: tagNames},
                         projectStatus: projectStatus,
                         location: location,
-                        creationTime: new Date()
+                        creationTime: new Date(),
+                        updationTime: new Date(),
                     }
                 })
                 if (createdProject) {
@@ -348,7 +347,7 @@ projectRouter.put('/update', async (req, res) => {
                             tagNames: {set: newProject.tagNames},
                             projectStatus: newProject.projectStatus,
                             location: newProject.location,
-                            creationTime: new Date()
+                            updationTime: new Date()
                         }
                     })
                     if (updatedProject) {
