@@ -38,7 +38,8 @@ tagRouter.post('/create', async (req, res) => {
                         title: title,
                         description: description,
                         applicableFor: applicableFor,
-                        creationTime: new Date()
+                        creationTime: new Date(),
+                        updationTime: new Date(),
                     }
                 })
                 if (createdtag) {
@@ -88,7 +89,8 @@ tagRouter.put('/update', async (req, res) => {
                         data: {
                             title: newTag.title,
                             description: newTag.description,
-                            applicableFor: newTag.applicableFor
+                            applicableFor: newTag.applicableFor,
+                            updationTime: new Date()
                         }
                     })
                     if (updatedTag) {
