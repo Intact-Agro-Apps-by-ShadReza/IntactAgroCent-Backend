@@ -44,7 +44,7 @@ tagRouter.post('/create', async (req, res) => {
                 if (createdtag) {
                     console.log('tag created')
                     let notificationDescription = "Tag was created successfully."
-                    res.send(`createdtag`)
+                    res.send(createdtag)
                 } else {
                     console.log('tag not created')
                     let notificationDescription = "Tag could not be created."
