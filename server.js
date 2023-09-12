@@ -9,6 +9,7 @@ const projectRouter = require('./routes/projects.js');
 const imageRouter = require('./routes/images.js');
 const tagRouter = require('./routes/tags.js');
 const currencyRouter = require('./routes/currency.js');
+const featuredProjectsRouter = require('./routes/featuredProjects.js');
 
 dotenv.config();
 
@@ -26,8 +27,9 @@ app.use('/projects', projectRouter)
 app.use('/images', imageRouter)
 app.use('/currencies', currencyRouter)
 app.use('/tags', tagRouter)
+app.use('/featured-projects', featuredProjectsRouter)
 app.get('/', (req, res) => {
-    res.send("Assalamu Alaikum from dev .Shad Reza.")
+    res.send("Assalamu Alaikum from dev Shad Reza.")
 })
 
 app.listen(process.env.PORT || 3000)

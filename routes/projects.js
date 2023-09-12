@@ -26,7 +26,7 @@ projectRouter.get('/', async (req, res) => {
 
     let startingProjectIndex = 0
     let normalGivingCount = 6
-    
+
     try {
 
         let queryStartingPageNumber = req.query.startingPageNumber
@@ -43,7 +43,6 @@ projectRouter.get('/', async (req, res) => {
             perPageCount = parseInt(queryPerPageCount.toString())
         }
 
-        
         if (startingPageNumber && perPageCount) {
             if (perPageCount < 1) {
                 perPageCount = normalGivingCount
