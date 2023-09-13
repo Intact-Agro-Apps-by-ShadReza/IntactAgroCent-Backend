@@ -134,7 +134,7 @@ model AdminPanel {
   creationTime DateTime
   updationTime DateTime?
   userId       String
-  RoleId       String
+  roleId       String
 }
 
 model NotificationShader {
@@ -158,7 +158,7 @@ model TransactionMessage {
   id                String   @id @unique @default(uuid())
   sendingTime       DateTime
   title             String
-  Description       String
+  description       String
   transactionFromId String
   transactionFromTo String
 }

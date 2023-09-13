@@ -12,6 +12,7 @@ const currencyRouter = require('./routes/currency.js')
 const featuredProjectsRouter = require('./routes/featuredProjects.js')
 const roleRouter = require('./routes/roles.js')
 const transactionCodesRouter = require('./routes/transactionCodes.js')
+const adminPanelRouter = require('./routes/adminPanel.js')
 
 dotenv.config()
 
@@ -32,6 +33,7 @@ app.use('/tags', tagRouter)
 app.use('/featured-projects', featuredProjectsRouter)
 app.use('/roles', roleRouter)
 app.use('/transaction-codes', transactionCodesRouter)
+app.use('/admin-panel', adminPanelRouter)
 
 app.get('/', (req, res) => {
     res.send("Assalamu Alaikum from dev Shad Reza.")
