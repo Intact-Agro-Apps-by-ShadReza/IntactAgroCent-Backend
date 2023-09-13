@@ -14,6 +14,7 @@ const roleRouter = require('./routes/roles.js')
 const transactionCodesRouter = require('./routes/transactionCodes.js')
 const adminPanelRouter = require('./routes/adminPanel.js')
 const notificationShaderRouter = require('./routes/notificationShader.js')
+const transactionMessagesRouter = require('./routes/transactionMessages.js')
 
 dotenv.config()
 
@@ -36,6 +37,7 @@ app.use('/roles', roleRouter)
 app.use('/transaction-codes', transactionCodesRouter)
 app.use('/admin-panel', adminPanelRouter)
 app.use('/notification-shader', notificationShaderRouter)
+app.use('/transaction-messages', transactionMessagesRouter)
 
 app.get('/', (req, res) => {
     res.send("Assalamu Alaikum from dev Shad Reza.")

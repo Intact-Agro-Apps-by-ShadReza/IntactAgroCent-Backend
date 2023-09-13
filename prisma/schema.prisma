@@ -138,7 +138,7 @@ model AdminPanel {
 }
 
 model NotificationShader {
-  id               String   @id @unique @default(uuid())
+  id               String    @id @unique @default(uuid())
   creationTime     DateTime
   updationTime     DateTime?
   initiatedById    String
@@ -159,8 +159,9 @@ model WithdrawlRequest {
 model TransactionMessage {
   id                String   @id @unique @default(uuid())
   sendingTime       DateTime
+  updationTime      DateTime?
   title             String
   description       String
   transactionFromId String
-  transactionFromTo String
+  transactionToId   String
 }

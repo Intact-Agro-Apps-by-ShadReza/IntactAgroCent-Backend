@@ -127,13 +127,13 @@ tagRouter.delete('/delete', async (req, res) => {
 
     if(tagId) {
         try {
-            const deletedtag = await prisma.tag.delete({
+            const deletedTag = await prisma.tag.delete({
                 where: {
                     id: tagId
                 }
             })
-            console.log(deletedtag)
-            res.send(deletedtag)
+            console.log(deletedTag)
+            res.send(deletedTag)
         } catch (error) {
             console.log("tag could not delete")
             let notificationDescription = "Please check the credentials passed for the deletion."
