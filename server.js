@@ -11,6 +11,7 @@ const tagRouter = require('./routes/tags.js')
 const currencyRouter = require('./routes/currency.js')
 const featuredProjectsRouter = require('./routes/featuredProjects.js')
 const roleRouter = require('./routes/roles.js')
+const transactionCodesRouter = require('./routes/transactionCodes.js')
 
 dotenv.config()
 
@@ -30,6 +31,7 @@ app.use('/currencies', currencyRouter)
 app.use('/tags', tagRouter)
 app.use('/featured-projects', featuredProjectsRouter)
 app.use('/roles', roleRouter)
+app.use('/transaction-codes', transactionCodesRouter)
 
 app.get('/', (req, res) => {
     res.send("Assalamu Alaikum from dev Shad Reza.")
