@@ -123,13 +123,13 @@ adminPanelRouter.delete('/delete', async (req, res) => {
 
     if(adminPanelId) {
         try {
-            const deletedtag = await prisma.adminPanel.delete({
+            const deletedAdminPanelMember = await prisma.adminPanel.delete({
                 where: {
                     id: adminPanelId
                 }
             })
-            console.log(deletedtag)
-            res.send(deletedtag)
+            console.log(deletedAdminPanelMember)
+            res.send(deletedAdminPanelMember)
         } catch (error) {
             console.log("admin panel member could not delete")
             let notificationDescription = "Please check the credentials passed for the deletion."
