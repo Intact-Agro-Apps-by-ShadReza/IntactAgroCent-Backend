@@ -138,11 +138,13 @@ model AdminPanel {
 }
 
 model NotificationShader {
-  id             String   @id @unique @default(uuid())
-  creationTime   DateTime
-  initiatedById  String
-  initiatedForId String
-  message        String
+  id               String   @id @unique @default(uuid())
+  creationTime     DateTime
+  updationTime     DateTime?
+  initiatedById    String
+  initiatedForType String
+  initiatedForId   String?
+  message          String
 }
 
 model WithdrawlRequest {
