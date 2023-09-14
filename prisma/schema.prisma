@@ -148,8 +148,9 @@ model NotificationShader {
 }
 
 model WithdrawlRequest {
-  id              String   @id @unique @default(uuid())
+  id              String    @id @unique @default(uuid())
   processedTime   DateTime
+  updationTime    DateTime?
   initiatedById   String
   withdrawlAmount Float
   status          String
@@ -157,7 +158,7 @@ model WithdrawlRequest {
 }
 
 model TransactionMessage {
-  id                String   @id @unique @default(uuid())
+  id                String    @id @unique @default(uuid())
   sendingTime       DateTime
   updationTime      DateTime?
   title             String
