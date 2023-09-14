@@ -18,6 +18,7 @@ const withdrawlRequestsRouter = require('./routes/withdrawlRequests.js')
 const referralOfferingsRouter = require('./routes/referralOfferings.js')
 const transactionRouter = require('./routes/transaction.js')
 const balanceRouter = require('./routes/balance.js')
+const paymentRouter = require('./routes/payment.js')
 
 dotenv.config()
 
@@ -45,6 +46,7 @@ app.use('/withdrawl-requests', withdrawlRequestsRouter)
 app.use('/referral-offerings', referralOfferingsRouter)
 app.use('/transactions', transactionRouter)
 app.use('/balances', balanceRouter)
+app.use('/payment', paymentRouter)
 
 app.get('/', (req, res) => {
     res.send("Assalamu Alaikum from dev Shad Reza.")
