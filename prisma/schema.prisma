@@ -111,6 +111,8 @@ model Transaction {
   transactionToId   String
   transactionAmount Float
   transactionStatus String
+  trxId             String   @unique
+  updationTime      DateTime?
 }
 
 model ReferralOfferings {

@@ -17,6 +17,7 @@ const notificationShaderRouter = require('./routes/notificationShader.js')
 const transactionMessagesRouter = require('./routes/transactionMessages.js')
 const withdrawlRequestsRouter = require('./routes/withdrawlRequests.js')
 const referralOfferingsRouter = require('./routes/referralOfferings.js')
+const transactionRouter = require('./routes/transaction.js')
 
 dotenv.config()
 
@@ -42,6 +43,7 @@ app.use('/notification-shader', notificationShaderRouter)
 app.use('/transaction-messages', transactionMessagesRouter)
 app.use('/withdrawl-requests', withdrawlRequestsRouter)
 app.use('/referral-offerings', referralOfferingsRouter)
+app.use('/transactions', transactionRouter)
 
 app.get('/', (req, res) => {
     res.send("Assalamu Alaikum from dev Shad Reza.")
