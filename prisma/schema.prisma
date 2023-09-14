@@ -114,12 +114,13 @@ model Transaction {
 }
 
 model ReferralOfferings {
-  id           String    @id @unique @default(uuid())
-  creationTime DateTime
-  updationTime DateTime?
-  referralName String
-  rewardType   String
-  rewardAmount Float
+  id                String    @id @unique @default(uuid())
+  creationTime      DateTime
+  updationTime      DateTime?
+  referralFromId    String
+  referralName      String
+  rewardType        String
+  rewardAmount      Float
   rewardDescription String
 }
 
