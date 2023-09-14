@@ -23,6 +23,7 @@
     "mailgen": "^2.0.27",
     "nodemailer": "^6.9.4",
     "prisma": "^5.3.0",
+    "sslcommerz-lts": "^1.1.0",
     "textflow.js": "^0.1.4"
   },
   "devDependencies": {
