@@ -17,7 +17,7 @@ transactionRouter.get('/', async (req, res) => {
 })
 
 transactionRouter.post('/create', async (req, res) => {
-    const { transactionFromId, transactionToId, transactionAmount, transactionStatus, trxId } = req.body
+    const { transactionFromId, transactionToId, transactionAmount, transactionStatus, trxId, trxCodeId } = req.body
 
     if (transactionFromId && transactionToId && transactionAmount && transactionStatus && trxId) {
         try {
@@ -39,6 +39,7 @@ transactionRouter.post('/create', async (req, res) => {
                         transactionAmount: transactionAmount,
                         transactionStatus: transactionStatus,
                         trxId: trxId,
+                        trxCodeId: trxCodeId,
                         creationTime: new Date(),
                         updationTime: new Date(),
                     }
@@ -69,7 +70,7 @@ transactionRouter.post('/create', async (req, res) => {
 transactionRouter.put('/update', async (req, res) => {
     const { transactionId, newTransaction } = req.body 
 
-    if (transactionId && newTransaction.transactionFromId && newTransaction.transactionToId && newTransaction.transactionAmount && newTransaction.transactionStatus && newTransaction.trxId) {
+    if (transactionId && newTransaction.transactionFromId && newTransaction.transactionToId && newTransaction.transactionAmount && newTransaction.transactionStatus && newTransaction.trxId && newTransaction.trxCodeId) {
         try {
             const oldTransaction = await prisma.transaction.findFirst({
                 where: {
@@ -87,6 +88,7 @@ transactionRouter.put('/update', async (req, res) => {
                         transactionAmount: newTransaction.transactionAmount,
                         transactionStatus: newTransaction.transactionStatus,
                         trxId: newTransaction.trxId,
+                        trxCodeId: newTransaction.trxCodeId,
                         updationTime: new Date()
                     }
                 })

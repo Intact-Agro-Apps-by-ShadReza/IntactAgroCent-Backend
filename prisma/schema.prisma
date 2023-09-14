@@ -105,13 +105,14 @@ model TransactionCodes {
 }
 
 model Transaction {
-  id                String   @id @unique @default(uuid())
+  id                String    @id @unique @default(uuid())
   creationTime      DateTime
   transactionFromId String
   transactionToId   String
   transactionAmount Float
   transactionStatus String
-  trxId             String   @unique
+  trxId             String    @unique
+  trxCodeId         String
   updationTime      DateTime?
 }
 
