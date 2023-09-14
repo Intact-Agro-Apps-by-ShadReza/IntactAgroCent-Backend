@@ -87,7 +87,7 @@ authRouter.post('/forgotPassword', async (req, res) => {
                         emailId: foundTheEmail.id,
                         expirationTimeInMinutes: codeTTLInMinutes,
                         expiredAt: new Date(new Date().getTime() + codeTTLInMinutes * 60000),
-                        creationTime: new Date
+                        creationTime: new Date,
                     }
                 })
 
