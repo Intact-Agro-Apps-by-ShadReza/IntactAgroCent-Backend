@@ -6,6 +6,7 @@ const paymentRouter = Router()
 const store_id = process.env.SSLCOMMERZ_STORE_ID
 const store_passwd = process.env.SSLCOMMERZ_STORE_PASSWORD
 const is_live = process.env.SSLCOMMERZ_ACCOUNT_LIVENESS === "true" ? true : false
+const frontend_url = process.env.FRONTEND_BASE_URL
 
 paymentRouter.get('/', async (req, res) => {
 
@@ -13,10 +14,10 @@ paymentRouter.get('/', async (req, res) => {
         total_amount: 100,
         currency: 'BDT',
         tran_id: 'REF123', // use unique tran_id for each api call
-        success_url: 'http://localhost:3000/success',
-        fail_url: 'http://localhost:3000/fail',
-        cancel_url: 'http://localhost:3000/cancel',
-        ipn_url: 'http://localhost:3000/ipn',
+        success_url: `${frontend_url}/success`,
+        fail_url: `${frontend_url}/fail`,
+        cancel_url: `${frontend_url}/cancel`,
+        ipn_url: `${frontend_url}/ipn`,
         shipping_method: 'Courier',
         product_name: 'Computer.',
         product_category: 'Electronic',
