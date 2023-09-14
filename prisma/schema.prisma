@@ -171,3 +171,16 @@ model TransactionMessage {
   transactionFromId String
   transactionToId   String
 }
+
+model Balance {
+  id                           String    @id @unique @default(uuid())
+  userId                       String    @unique
+  investedMoneyInBDT           Float
+  withdrawedMoneyInBDT         Float
+  returnOnInvestmentMoneyInBDT Float
+  referredMoneyInBDT           Float
+  extraMoneyInBDT              Float
+  balanceInBDT                 Float
+  creationTime                 DateTime
+  updationTime                 DateTime?
+}
