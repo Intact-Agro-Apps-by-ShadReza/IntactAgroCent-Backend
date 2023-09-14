@@ -20,13 +20,11 @@ const filterTheProjects = async (startingProjectIndex, normalGivingCount, totalP
     return filteredProjects
 }
 
-
-
 projectRouter.get('/', async (req, res) => {
 
     let startingProjectIndex = 0
     let normalGivingCount = 6
-    
+
     try {
 
         let queryStartingPageNumber = req.query.startingPageNumber
@@ -43,7 +41,6 @@ projectRouter.get('/', async (req, res) => {
             perPageCount = parseInt(queryPerPageCount.toString())
         }
 
-        
         if (startingPageNumber && perPageCount) {
             if (perPageCount < 1) {
                 perPageCount = normalGivingCount
@@ -272,7 +269,8 @@ projectRouter.post('/create', async (req, res) => {
                         tagNames: {set: tagNames},
                         projectStatus: projectStatus,
                         location: location,
-                        creationTime: new Date()
+                        creationTime: new Date(),
+                        updationTime: new Date(),
                     }
                 })
                 if (createdProject) {
@@ -349,7 +347,7 @@ projectRouter.put('/update', async (req, res) => {
                             tagNames: {set: newProject.tagNames},
                             projectStatus: newProject.projectStatus,
                             location: newProject.location,
-                            creationTime: new Date()
+                            updationTime: new Date()
                         }
                     })
                     if (updatedProject) {

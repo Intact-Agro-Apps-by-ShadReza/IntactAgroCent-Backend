@@ -38,13 +38,14 @@ tagRouter.post('/create', async (req, res) => {
                         title: title,
                         description: description,
                         applicableFor: applicableFor,
-                        creationTime: new Date()
+                        creationTime: new Date(),
+                        updationTime: new Date(),
                     }
                 })
                 if (createdtag) {
                     console.log('tag created')
                     let notificationDescription = "Tag was created successfully."
-                    res.send(`createdtag`)
+                    res.send(createdtag)
                 } else {
                     console.log('tag not created')
                     let notificationDescription = "Tag could not be created."
@@ -88,7 +89,8 @@ tagRouter.put('/update', async (req, res) => {
                         data: {
                             title: newTag.title,
                             description: newTag.description,
-                            applicableFor: newTag.applicableFor
+                            applicableFor: newTag.applicableFor,
+                            updationTime: new Date()
                         }
                     })
                     if (updatedTag) {
@@ -125,13 +127,13 @@ tagRouter.delete('/delete', async (req, res) => {
 
     if(tagId) {
         try {
-            const deletedtag = await prisma.tag.delete({
+            const deletedTag = await prisma.tag.delete({
                 where: {
                     id: tagId
                 }
             })
-            console.log(deletedtag)
-            res.send(deletedtag)
+            console.log(deletedTag)
+            res.send(deletedTag)
         } catch (error) {
             console.log("tag could not delete")
             let notificationDescription = "Please check the credentials passed for the deletion."
