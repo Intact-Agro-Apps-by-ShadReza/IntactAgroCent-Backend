@@ -105,21 +105,26 @@ model TransactionCodes {
 }
 
 model Transaction {
-  id                String   @id @unique @default(uuid())
+  id                String    @id @unique @default(uuid())
   creationTime      DateTime
   transactionFromId String
   transactionToId   String
   transactionAmount Float
   transactionStatus String
+  trxId             String    @unique
+  trxCodeId         String
+  updationTime      DateTime?
 }
 
 model ReferralOfferings {
-  id           String    @id @unique @default(uuid())
-  creationTime DateTime
-  updationTime DateTime?
-  referralName String
-  rewardType   String
-  rewardAmount Float
+  id                String    @id @unique @default(uuid())
+  creationTime      DateTime
+  updationTime      DateTime?
+  referralFromId    String
+  referralName      String
+  rewardType        String
+  rewardAmount      Float
+  rewardDescription String
 }
 
 model Role {
@@ -165,4 +170,17 @@ model TransactionMessage {
   description       String
   transactionFromId String
   transactionToId   String
+}
+
+model Balance {
+  id                           String    @id @unique @default(uuid())
+  userId                       String    @unique
+  investedMoneyInBDT           Float
+  withdrawedMoneyInBDT         Float
+  returnOnInvestmentMoneyInBDT Float
+  referredMoneyInBDT           Float
+  extraMoneyInBDT              Float
+  balanceInBDT                 Float
+  creationTime                 DateTime
+  updationTime                 DateTime?
 }
