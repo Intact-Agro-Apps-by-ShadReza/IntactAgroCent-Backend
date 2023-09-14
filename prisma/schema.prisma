@@ -120,6 +120,7 @@ model ReferralOfferings {
   referralName String
   rewardType   String
   rewardAmount Float
+  rewardDescription String
 }
 
 model Role {
