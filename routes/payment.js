@@ -6,47 +6,80 @@ const paymentRouter = Router()
 const store_id = process.env.SSLCOMMERZ_STORE_ID
 const store_passwd = process.env.SSLCOMMERZ_STORE_PASSWORD
 const is_live = process.env.SSLCOMMERZ_ACCOUNT_LIVENESS === "true" ? true : false
-const frontend_url = process.env.FRONTEND_BASE_URL
+const backend_action_base_url = "http://localhost:3000/payment"
 
 paymentRouter.get('/', async (req, res) => {
 
-    const data = {
-        total_amount: 100,
-        currency: 'BDT',
-        tran_id: 'REF123', // use unique tran_id for each api call
-        success_url: `${frontend_url}/success`,
-        fail_url: `${frontend_url}/fail`,
-        cancel_url: `${frontend_url}/cancel`,
-        ipn_url: `${frontend_url}/ipn`,
-        shipping_method: 'Courier',
-        product_name: 'Computer.',
-        product_category: 'Electronic',
-        product_profile: 'general',
-        cus_name: 'Customer Name',
-        cus_email: 'customer@example.com',
-        cus_add1: 'Dhaka',
-        cus_add2: 'Dhaka',
-        cus_city: 'Dhaka',
-        cus_state: 'Dhaka',
-        cus_postcode: '1000',
-        cus_country: 'Bangladesh',
-        cus_phone: '01711111111',
-        cus_fax: '01711111111',
-        ship_name: 'Customer Name',
-        ship_add1: 'Dhaka',
-        ship_add2: 'Dhaka',
-        ship_city: 'Dhaka',
-        ship_state: 'Dhaka',
-        ship_postcode: 1000,
-        ship_country: 'Bangladesh',
-    };
-    const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live)
-    sslcz.init(data).then(apiResponse => {
-        // Redirect the user to payment gateway
-        let GatewayPageURL = apiResponse.GatewayPageURL
-        res.redirect(GatewayPageURL)
-        console.log('Redirecting to: ', GatewayPageURL)
-    });
+    try {
+
+        const {
+            total_amount,
+            currency,
+            shipping_method,
+            product_name,
+            product_category,
+            product_profile,
+            cus_name,
+            cus_email,
+            cus_add1,
+            cus_add2,
+            cus_city,
+            cus_state,
+            cus_postcode,
+            cus_country,
+            cus_phone,
+            cus_fax,
+            ship_name,
+            ship_add1,
+            ship_add2,
+            ship_city,
+            ship_state,
+            ship_postcode,
+            ship_country
+        } = req.body    
+
+
+
+        const data = {
+            total_amount: 100,
+            currency: 'USD',
+            tran_id: 'REF123', // use unique tran_id for each api call
+            success_url: `${backend_action_base_url}/success`,
+            fail_url: `${backend_action_base_url}/fail`,
+            cancel_url: `${backend_action_base_url}/cancel`,
+            ipn_url: `${backend_action_base_url}/ipn`,
+            shipping_method: 'Courier',
+            product_name: 'Computer.',
+            product_category: 'Electronic',
+            product_profile: 'general',
+            cus_name: 'Customer Name',
+            cus_email: 'customer@example.com',
+            cus_add1: 'Dhaka',
+            cus_add2: 'Dhaka',
+            cus_city: 'Dhaka',
+            cus_state: 'Dhaka',
+            cus_postcode: '1000',
+            cus_country: 'Bangladesh',
+            cus_phone: '01711111111',
+            cus_fax: '',
+            ship_name: 'Customer Name',
+            ship_add1: 'Dhaka',
+            ship_add2: 'Dhaka',
+            ship_city: 'Dhaka',
+            ship_state: 'Dhaka',
+            ship_postcode: 1000,
+            ship_country: 'Bangladesh',
+        };
+        const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live)
+        sslcz.init(data).then(apiResponse => {
+            // Redirect the user to payment gateway
+            let GatewayPageURL = apiResponse.GatewayPageURL
+            res.redirect(GatewayPageURL)
+        });
+
+    } catch {
+
+    }
 
 })
 
