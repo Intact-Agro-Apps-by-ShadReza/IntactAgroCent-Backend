@@ -184,3 +184,14 @@ model Balance {
   creationTime                 DateTime
   updationTime                 DateTime?
 }
+
+model WebsiteInformation {
+  id                    String    @id @unique @default(uuid())
+  websiteName           String
+  bigLogoLink           String
+  smallLogoLink         String
+  privacyPolicyLink     String
+  termsAndConditionLink String
+  creationTime          DateTime
+  updationTime          DateTime?
+}
