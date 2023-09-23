@@ -173,12 +173,15 @@ authRouter.post('/login', async (req, res) => {
                                 emailId: foundTheSameEmail.id
                             }
                         })
-                        res.statusMessage = "Login Successful"
-                        res.set({
-                            userEmail: email,
-                            userVerification: foundTheSameEmail.emailVerified
+                        return res.status(200).json({
+                            success: true,
+                            data: {
+                                userId: foundTheSameEmail.id,
+                                userEmail: email,
+                                userVerification: foundTheSameEmail.emailVerified
+                            },
+                            message: "Login Successful",
                         })
-                        return res.status(200).end("Login Successful")
                     } else {
                         res.statusMessage = "Invalid Credentials"
                         return res.status(403).end("Invalid Credentials")
@@ -489,6 +492,7 @@ authRouter.post('/verifyPasswordReset', async (req, res) => {
 authRouter.post('/register', async (req, res) => {
 
     const { email, password } = req.body
+    const noVerificationNeeded = req.body.noVerificationNeeded === "no-verification_Needed" ? true : false
 
     if (!(email && password)) {
         res.statusMessage = "Provide valid Email & Password !"
@@ -523,51 +527,100 @@ authRouter.post('/register', async (req, res) => {
                 data: {
                     email: email,         
                     password: encryptedPassowrd,         
-                    emailVerified: false,
+                    emailVerified: noVerificationNeeded,
                     creationTime: new Date
                 }
             })
             
             if (registeredMail && registeredMail.email && registeredMail.email === email) {
-                let config = {
-                    service: 'gmail',
-                    auth: {
-                        user: process.env.MAIL_OF_SENDER_CONFIGURED,
-                        pass: process.env.PASSWORD_OF_SENDER_MAIL_CONFIGURED
+                if (noVerificationNeeded) {
+                    return res.status(201).end("Mail Created With No Verification Priviledge...")
+                } else {
+                    let config = {
+                        service: 'gmail',
+                        auth: {
+                            user: process.env.MAIL_OF_SENDER_CONFIGURED,
+                            pass: process.env.PASSWORD_OF_SENDER_MAIL_CONFIGURED
+                        }
                     }
-                }
 
-                let MailGenerator = new Mailgen({
-                    theme: 'default',
-                    product: {
-                        name: 'Mailgen',
-                        link: 'https://mailgen.js/'
-                    }
-                })
+                    let MailGenerator = new Mailgen({
+                        theme: 'default',
+                        product: {
+                            name: 'Mailgen',
+                            link: 'https://mailgen.js/'
+                        }
+                    })
 
-                const generatedOTP = Math.random().toString().substr(2, 6)
+                    const generatedOTP = Math.random().toString().substr(2, 6)
 
-                const verificationCodeForMail = await prisma.mailVerificationCode.findFirst({
-                    where: {
-                        emailId: registeredMail.id
-                    }
-                })
+                    const verificationCodeForMail = await prisma.mailVerificationCode.findFirst({
+                        where: {
+                            emailId: registeredMail.id
+                        }
+                    })
 
-                const codeTTLInMinutes = 30
+                    const codeTTLInMinutes = 30
 
-                if (verificationCodeForMail) {
-                    const currentTime = new Date()
-                    if (currentTime >= verificationCodeForMail.expiredAt) {
-                        res.statusMessage = "A verification code is already sitting in your mail. Please verify first."
-                        return res.status(201).end("A verification code is already sitting in your mail. Please verify first.")
-                    } else {
-                        await prisma.mailVerificationCode.deleteMany({
-                            where: {
-                                emailId: registeredMail.id
+                    if (verificationCodeForMail) {
+                        const currentTime = new Date()
+                        if (currentTime >= verificationCodeForMail.expiredAt) {
+                            res.statusMessage = "A verification code is already sitting in your mail. Please verify first."
+                            return res.status(201).end("A verification code is already sitting in your mail. Please verify first.")
+                        } else {
+                            await prisma.mailVerificationCode.deleteMany({
+                                where: {
+                                    emailId: registeredMail.id
+                                }
+                            })
+
+
+                            const veriificationMail = prisma.mailVerificationCode.create({
+                                data: {
+                                    verificationCode: generatedOTP,
+                                    emailId: registeredMail.id,
+                                    expirationTimeInMinutes: codeTTLInMinutes,
+                                    expiredAt: new Date(new Date().getTime() + codeTTLInMinutes*60000),
+                                    creationTime: new Date
+                                }
+                            })
+
+                            if(await veriificationMail && (await veriificationMail).emailId) {
+                                let response = {
+                                    body: {
+                                        name: "Intact Agro",
+                                        intro: `Your verification code is ${generatedOTP}`,
+                                        outro: `This will expire within ${codeTTLInMinutes} minutes...`
+                                    }
+                                }
+
+                                let mail = MailGenerator.generate(response)
+                                let message = {
+                                    from: process.env.MAIL_OF_SENDER_CONFIGURED,
+                                    to: email,
+                                    subject: 'Email verification from Intact Agro Cent',
+                                    html: mail
+                                }
+
+                                let transporter = nodemailer.createTransport(config)
+
+                                transporter.sendMail(message)
+                                    .then(() => {
+                                        res.statusMessage = "Registration Successful. Please verify your mail. We've already sent you a verification mail to your registered Email."
+                                        return res.status(201).end("Registration Successful. Please verify your mail. We've already sent you a verification mail to your registered Email.")
+                                    })
+                                    .catch((error) => {
+                                        console.log(error.message)
+                                        res.statusMessage = "Registration Successful. But mail not sent."
+                                        return res.status(500).end("Registration Successful. But mail not sent.")
+                                    })
+                            } else {
+                                console.log("VerificationCode could not be stored in DB")
+                                res.statusMessage = "Registration Successful. But mail not sent."
+                                return res.status(500).end("Registration Successful. But mail not sent.")
                             }
-                        })
-
-
+                        }
+                    } else {
                         const veriificationMail = prisma.mailVerificationCode.create({
                             data: {
                                 verificationCode: generatedOTP,
@@ -612,51 +665,6 @@ authRouter.post('/register', async (req, res) => {
                             res.statusMessage = "Registration Successful. But mail not sent."
                             return res.status(500).end("Registration Successful. But mail not sent.")
                         }
-                    }
-                } else {
-                    const veriificationMail = prisma.mailVerificationCode.create({
-                        data: {
-                            verificationCode: generatedOTP,
-                            emailId: registeredMail.id,
-                            expirationTimeInMinutes: codeTTLInMinutes,
-                            expiredAt: new Date(new Date().getTime() + codeTTLInMinutes*60000),
-                            creationTime: new Date
-                        }
-                    })
-
-                    if(await veriificationMail && (await veriificationMail).emailId) {
-                        let response = {
-                            body: {
-                                name: "Intact Agro",
-                                intro: `Your verification code is ${generatedOTP}`,
-                                outro: `This will expire within ${codeTTLInMinutes} minutes...`
-                            }
-                        }
-
-                        let mail = MailGenerator.generate(response)
-                        let message = {
-                            from: process.env.MAIL_OF_SENDER_CONFIGURED,
-                            to: email,
-                            subject: 'Email verification from Intact Agro Cent',
-                            html: mail
-                        }
-
-                        let transporter = nodemailer.createTransport(config)
-
-                        transporter.sendMail(message)
-                            .then(() => {
-                                res.statusMessage = "Registration Successful. Please verify your mail. We've already sent you a verification mail to your registered Email."
-                                return res.status(201).end("Registration Successful. Please verify your mail. We've already sent you a verification mail to your registered Email.")
-                            })
-                            .catch((error) => {
-                                console.log(error.message)
-                                res.statusMessage = "Registration Successful. But mail not sent."
-                                return res.status(500).end("Registration Successful. But mail not sent.")
-                            })
-                    } else {
-                        console.log("VerificationCode could not be stored in DB")
-                        res.statusMessage = "Registration Successful. But mail not sent."
-                        return res.status(500).end("Registration Successful. But mail not sent.")
                     }
                 }
             } else {
