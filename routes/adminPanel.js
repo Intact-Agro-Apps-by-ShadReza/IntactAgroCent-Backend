@@ -18,14 +18,24 @@ adminPanelRouter.get('/', async (req, res) => {
 
 adminPanelRouter.get('/verify/:userId', async (req, res) => {
     const userId = req.params.userId
-    console.log(userId)
     try {
         const adminPanelMember = await prisma.adminPanel.findFirst({
             where: {
-                id: userId
+                userId: userId
             }
         })
-        res.status(200).send(adminPanelMember)
+        const adminRole = await prisma.role.findFirst({
+            where: {
+                roleName: 'admin'
+            }
+        })
+        if (adminPanelMember && adminPanelMember.userId === userId && adminPanelMember.roleId === adminRole?.id) {
+            let notificationDescription = "Admin Access Granted !"
+            res.status(200).end(notificationDescription)
+        } else {
+            let notificationDescription = "Unautorized Access !"
+            res.status(404).end(notificationDescription)
+        }
     } catch (error) {
         console.log(error.message)
         let notificationDescription = "There were some issues connecting with the server. Please try again after sometimes."
