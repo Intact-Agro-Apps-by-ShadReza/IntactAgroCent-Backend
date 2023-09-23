@@ -16,6 +16,23 @@ adminPanelRouter.get('/', async (req, res) => {
     }
 })
 
+adminPanelRouter.get('/verify/:userId', async (req, res) => {
+    const userId = req.params.userId
+    console.log(userId)
+    try {
+        const adminPanelMember = await prisma.adminPanel.findFirst({
+            where: {
+                id: userId
+            }
+        })
+        res.status(200).send(adminPanelMember)
+    } catch (error) {
+        console.log(error.message)
+        let notificationDescription = "There were some issues connecting with the server. Please try again after sometimes."
+        return res.status(500).end(notificationDescription)
+    }
+})
+
 adminPanelRouter.post('/create', async (req, res) => {
     const { userId, roleId } = req.body    
 
