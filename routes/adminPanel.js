@@ -16,6 +16,22 @@ adminPanelRouter.get('/', async (req, res) => {
     }
 })
 
+adminPanelRouter.get('/userIds', async (req, res) => {
+    try {
+        const userIds = await prisma.registeredMail.findMany()
+        if (userIds && userIds.length) {
+            res.send(userIds)
+        } else {
+            let notificationDescription = "No User Ids Found!"
+            res.status(404).end(notificationDescription)
+        }
+    } catch (error) {
+        console.log(error.message)
+        let notificationDescription = "There were some issues connecting with the server. Please try again after sometimes."
+        return res.status(500).end(notificationDescription)
+    }
+})
+
 adminPanelRouter.get('/verify/:userId', async (req, res) => {
     const userId = req.params.userId
     try {
