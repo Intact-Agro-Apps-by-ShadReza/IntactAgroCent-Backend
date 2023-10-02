@@ -59,23 +59,42 @@ adminPanelRouter.post('/create', async (req, res) => {
                 let notificationDescription = "Another admin panel member is already with another duty."
                 return res.status(406).end(notificationDescription)
             } else {
-                const createdAdminPanelMember = await prisma.adminPanel.create({
-                    data: {
-                        userId: userId,
-                        roleId: roleId,
-                        creationTime: new Date(),
-                        updationTime: new Date(),
+                const userIdAvailableInRegisteredMail = await prisma.registeredMail.findFirst({
+                    where: {
+                        id: userId
                     }
                 })
-                if (createdAdminPanelMember) {
-                    console.log('admin panel member created')
-                    let notificationDescription = "Admin panel member was created successfully."
-                    res.send(createdAdminPanelMember)
+
+                const roleIdAvailable = await prisma.role.findFirst({
+                    where: {
+                        id: roleId
+                    }
+                })
+
+                if (userIdAvailableInRegisteredMail && roleId) {
+                    const createdAdminPanelMember = await prisma.adminPanel.create({
+                        data: {
+                            userId: userId,
+                            roleId: roleId,
+                            creationTime: new Date(),
+                            updationTime: new Date(),
+                        }
+                    })
+                    if (createdAdminPanelMember) {
+                        console.log('admin panel member created')
+                        let notificationDescription = "Admin panel member was created successfully."
+                        res.send(createdAdminPanelMember)
+                    } else {
+                        console.log('admin panel member not created')
+                        let notificationDescription = "Admin panel member could not be created."
+                        return res.status(406).end(notificationDescription)
+                    }
                 } else {
-                    console.log('admin panel member not created')
-                    let notificationDescription = "Admin panel member could not be created."
-                    return res.status(406).end(notificationDescription)
+                    console.log('invalid ids')
+                    let notificationDescription = "Provided Ids are not valid. Please try again with valid ones."
+                    return res.status(500).end(notificationDescription)
                 }
+
             }
 
         } catch (error) {
