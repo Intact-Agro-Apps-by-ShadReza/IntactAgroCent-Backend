@@ -35,7 +35,7 @@ adminPanelRouter.get('/userIds', async (req, res) => {
         if (userIdsNotInAdminPanel && userIdsNotInAdminPanel.length) {
             res.send(userIdsNotInAdminPanel)
         } else {
-            let notificationDescription = "No User Ids Found!"
+            let notificationDescription = "No User Ids Found! Admin Attention required."
             res.status(404).end(notificationDescription)
         }
     } catch (error) {
@@ -47,7 +47,11 @@ adminPanelRouter.get('/userIds', async (req, res) => {
 
 adminPanelRouter.get('/roleIds', async (req, res) => {
     try {
-        const roles = await prisma.role.findMany()
+        const roles = await prisma.role.findMany({
+            where: {
+                roleName: "admin"
+            }
+        })
         const roleIds = roles.map((roleId) => {
             const newRole = {
                 id: roleId.id,
@@ -59,7 +63,7 @@ adminPanelRouter.get('/roleIds', async (req, res) => {
         if (roleIds && roleIds.length) {
             res.send(roleIds)
         } else {
-            let notificationDescription = "No Role Ids Found!"
+            let notificationDescription = "No Role Ids Found! Admin Attention required."
             res.status(404).end(notificationDescription)
         }
     } catch (error) {
