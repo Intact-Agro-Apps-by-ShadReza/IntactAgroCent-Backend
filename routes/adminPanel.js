@@ -71,7 +71,7 @@ adminPanelRouter.post('/create', async (req, res) => {
                     }
                 })
 
-                if (userIdAvailableInRegisteredMail && roleId) {
+                if (userIdAvailableInRegisteredMail && roleIdAvailable) {
                     const createdAdminPanelMember = await prisma.adminPanel.create({
                         data: {
                             userId: userId,
