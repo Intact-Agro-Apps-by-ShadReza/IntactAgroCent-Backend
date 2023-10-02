@@ -35,7 +35,7 @@ adminPanelRouter.get('/userIds', async (req, res) => {
         if (userIdsNotInAdminPanel && userIdsNotInAdminPanel.length) {
             res.send(userIdsNotInAdminPanel)
         } else {
-            let notificationDescription = "No User Ids Found!"
+            let notificationDescription = "No User Ids Found! Admin Attention required."
             res.status(404).end(notificationDescription)
         }
     } catch (error) {
@@ -59,7 +59,7 @@ adminPanelRouter.get('/roleIds', async (req, res) => {
         if (roleIds && roleIds.length) {
             res.send(roleIds)
         } else {
-            let notificationDescription = "No Role Ids Found!"
+            let notificationDescription = "No Role Ids Found! Admin Attention required."
             res.status(404).end(notificationDescription)
         }
     } catch (error) {
