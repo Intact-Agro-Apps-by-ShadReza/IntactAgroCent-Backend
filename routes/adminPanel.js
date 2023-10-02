@@ -47,7 +47,11 @@ adminPanelRouter.get('/userIds', async (req, res) => {
 
 adminPanelRouter.get('/roleIds', async (req, res) => {
     try {
-        const roles = await prisma.role.findMany()
+        const roles = await prisma.role.findMany({
+            where: {
+                roleName: "admin"
+            }
+        })
         const roleIds = roles.map((roleId) => {
             const newRole = {
                 id: roleId.id,
