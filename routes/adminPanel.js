@@ -18,9 +18,16 @@ adminPanelRouter.get('/', async (req, res) => {
 
 adminPanelRouter.get('/userIds', async (req, res) => {
     try {
-        const userIds = await prisma.registeredMail.findMany()
-        if (userIds && userIds.length) {
-            res.send(userIds)
+        const userFromRegisteredMail = await prisma.registeredMail.findMany()
+        const userIdsFromRegisteredMail = userFromRegisteredMail.map((userId) => userId.id)
+
+        const userIdsFromAdminPanel = await prisma.adminPanel.findMany()
+        const userIdsThatAreAlreadyInAdminPanel = userIdsFromAdminPanel.map((userId) => userId.userId)
+
+        const userIdsNotInAdminPanel = userIdsFromRegisteredMail.filter(value => !userIdsThatAreAlreadyInAdminPanel.includes(value));
+
+        if (userIdsNotInAdminPanel && userIdsNotInAdminPanel.length) {
+            res.send(userIdsNotInAdminPanel)
         } else {
             let notificationDescription = "No User Ids Found!"
             res.status(404).end(notificationDescription)
