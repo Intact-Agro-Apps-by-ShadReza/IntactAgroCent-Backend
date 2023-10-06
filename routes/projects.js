@@ -3,32 +3,21 @@ const { Router } = require('express')
 const projectRouter = Router()
 
 const { PrismaClient } = require('@prisma/client')
+const { filterTheItems } = require('../utils/filterTheItems')
+
 const prisma = new PrismaClient()
-
-const filterTheProjects = async (startingProjectIndex, normalGivingCount, totalProjectsCount, projects) => {
-
-    let filteredProjects = []
-    let lastIndex = startingProjectIndex + normalGivingCount
-    if (lastIndex > totalProjectsCount) {
-        lastIndex = totalProjectsCount
-    }
-    for (let i = startingProjectIndex; i < lastIndex; i++) {
-        if (projects[i]) {
-            filteredProjects.push(projects[i])
-        }
-    }
-    return filteredProjects
-}
 
 projectRouter.get('/', async (req, res) => {
 
     let startingProjectIndex = 0
     let normalGivingCount = 6
+    let searchables = ''
 
     try {
 
         let queryStartingPageNumber = req.query.startingPageNumber
         let queryPerPageCount = req.query.perPageCount
+        let querySearchables = req.query.searchables
 
         let startingPageNumber = 1
         let perPageCount = 6
@@ -39,6 +28,10 @@ projectRouter.get('/', async (req, res) => {
 
         if (queryPerPageCount && parseInt(queryPerPageCount.toString())) {
             perPageCount = parseInt(queryPerPageCount.toString())
+        }
+
+        if (querySearchables) {
+            searchables = querySearchables.toString()
         }
 
         if (startingPageNumber && perPageCount) {
@@ -58,7 +51,6 @@ projectRouter.get('/', async (req, res) => {
         startingProjectIndex = 0
         normalGivingCount = 6
     } finally {
-
         try {
             const projectsCount = await prisma.project.count()
             if (projectsCount < 1) {
@@ -69,7 +61,6 @@ projectRouter.get('/', async (req, res) => {
                     normalGivingCount = projectsCount
                     startingProjectIndex = 0
                 } else {
-
                     if (normalGivingCount < 1) {
                         normalGivingCount = 1
                     }
@@ -168,12 +159,14 @@ projectRouter.get('/', async (req, res) => {
                         projects = await prisma.project.findMany()
                     }
 
+                    const fieldForSearching = "title"
 
-                    await filterTheProjects(startingProjectIndex, normalGivingCount, projectsCount, projects)
+                    await filterTheItems(startingProjectIndex, normalGivingCount, projectsCount, projects, fieldForSearching, searchables)
                         .then(response => {
                             res.send({
-                                totalProjectCount: projectsCount,
-                                filteredProjects: response
+                                totalProjectCount: response[1],
+                                filteredProjects: response[0],
+                                totalAllInAllProjectsCount: projectsCount
                             })
                         })
                 } catch(error) {
