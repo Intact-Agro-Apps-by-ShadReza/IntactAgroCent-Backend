@@ -3,17 +3,182 @@ const { Router } = require('express')
 const adminPanelRouter = Router()
 
 const { PrismaClient } = require('@prisma/client')
+const { filterTheItems } = require('../utils/filterTheItems')
 const prisma = new PrismaClient()
 
 adminPanelRouter.get('/', async (req, res) => {
+
+    let startingItemIndex = 0
+    let normalGivingCount = 6
+    let searchables = ''
+
     try {
-        const adminPanel = await prisma.adminPanel.findMany()
-        res.send(adminPanel)
-    } catch (error) {
-        console.log(error.message)
-        let notificationDescription = "There were some issues connecting with the server. Please try again after sometimes."
-        return res.status(500).end(notificationDescription)
+
+        let queryStartingPageNumber = req.query.startingPageNumber
+        let queryPerPageCount = req.query.perPageCount
+        let querySearchables = req.query.searchables
+
+        let startingPageNumber = 1
+        let perPageCount = 6
+
+        if (queryStartingPageNumber && parseInt(queryStartingPageNumber.toString())) {
+            startingPageNumber = parseInt(queryStartingPageNumber.toString())
+        }
+
+        if (queryPerPageCount && parseInt(queryPerPageCount.toString())) {
+            perPageCount = parseInt(queryPerPageCount.toString())
+        }
+
+        if (querySearchables) {
+            searchables = querySearchables.toString()
+        }
+
+        if (startingPageNumber && perPageCount) {
+            if (perPageCount < 1) {
+                perPageCount = normalGivingCount
+            }
+            if (startingPageNumber < 1) {
+                startingPageNumber = 1
+            }
+            startingItemIndex = (startingPageNumber - 1) * perPageCount
+            normalGivingCount = perPageCount
+        } else {
+            startingItemIndex = 0
+            normalGivingCount = 6
+        }
+    } catch {
+        startingItemIndex = 0
+        normalGivingCount = 6
+    } finally {
+        try {
+            const adminPanelsCount = await prisma.adminPanel.count()
+            if (adminPanelsCount < 1) {
+                let notificationDescription = "Currently there are no admin member enlisted."
+                return res.status(404).end(notificationDescription)
+            } else {
+                if (normalGivingCount >= adminPanelsCount) {
+                    normalGivingCount = adminPanelsCount
+                    startingItemIndex = 0
+                } else {
+                    if (normalGivingCount < 1) {
+                        normalGivingCount = 1
+                    }
+                    if ((startingItemIndex >= adminPanelsCount)) {
+                        startingItemIndex = adminPanelsCount - 1
+                    } else if (startingItemIndex < 0) {
+                        startingItemIndex = 0
+                    }
+                }
+                let adminPanels = []
+                try {
+                    let filter = ''
+                    const queryFilter = req.query.filter
+                    if (queryFilter && queryFilter.toString()) {
+                        filter = queryFilter.toString()
+                    }
+                    if (filter === "sort-by-created-asc") {
+                        adminPanels = await prisma.adminPanel.findMany({
+                            orderBy: {
+                                creationTime: 'asc',
+                            },
+                        })
+                    } else if (filter === "sort-by-created-desc") {
+                        adminPanels = await prisma.adminPanel.findMany({
+                            orderBy: {
+                                creationTime: 'desc',
+                            },
+                        })
+                    } else {
+                        adminPanels = await prisma.adminPanel.findMany()
+                    }
+
+                    const fieldForSearching = ""
+
+                    await filterTheItems(startingItemIndex, normalGivingCount, adminPanelsCount, adminPanels, fieldForSearching, searchables)
+                        .then(response => {
+                            res.send({
+                                totalAdminMemberCount: response[1],
+                                filteredAdminMembers: response[0],
+                                totalAllInAllAdminMembersCount: adminPanelsCount
+                            })
+                        })
+                } catch(error) {
+                    console.log(error.message)
+                    let notificationDescription = "There were some issues connecting with the server. Please try again after sometimes."
+                    return res.status(500).end(notificationDescription)
+                }
+            }
+        } catch {
+            let notificationDescription = "There were some issues connecting with the server. Please try again after sometimes."
+            return res.status(500).end(notificationDescription)
+        }
     }
+
+})
+
+adminPanelRouter.get('/details', async (req, res) => {
+    try {
+        const { adminMembersIds, rolesIds } = req.query;
+        if (adminMembersIds && rolesIds) {
+
+            const adminMembersIdsString = Array.isArray(adminMembersIds) ? adminMembersIds.join(',') : adminMembersIds;
+
+            const rolesIdsString = Array.isArray(rolesIds) ? rolesIds.join(',') : rolesIds;
+
+            // @ts-ignore
+            const parsedAdminMembersIds = JSON.parse(adminMembersIdsString);
+            // @ts-ignore
+            const parsedRolesIds = JSON.parse(rolesIdsString);
+
+            if (!Array.isArray(parsedAdminMembersIds)) {
+                console.log('Invalid admin members ids parameter.')
+                let notificationDescription = "Invalid admin members ids parameter."
+                return res.status(500).end(notificationDescription)
+            }
+            if (!Array.isArray(parsedRolesIds)) {
+                console.log('Invalid roles ids parameter.')
+                let notificationDescription = "Invalid roles ids parameter."
+                return res.status(500).end(notificationDescription)
+            }
+            
+            try {
+                const adminMembersInDetailsMails = await prisma.registeredMail.findMany({
+                    where: {
+                        id: {
+                            in: parsedAdminMembersIds
+                        }
+                    }
+                })
+                const adminMembersInDetailsRoles = await prisma.role.findMany({
+                    where: {
+                        id: {
+                            in: parsedRolesIds
+                        }
+                    }
+                })
+                res.send(
+                    {
+                        adminMembersMails: adminMembersInDetailsMails,
+                        adminMembersRoles: adminMembersInDetailsRoles
+                    }
+                )
+            } catch (error) {
+                console.log("admin panel member could not delete")
+                let notificationDescription = "Please check the credentials passed for the deletion."
+                return res.status(500).end(notificationDescription)
+            }
+        } else {
+            console.log("admin panel member invalid params")
+            let notificationDescription = "Please provide correct id for the request."
+            return res.status(400).end(notificationDescription)
+        }
+    } catch (error) {
+        console.log("admin panel member invalid params")
+        let notificationDescription = "Please provide correct id for the request."
+        return res.status(400).end(notificationDescription)
+    }
+
+
 })
 
 adminPanelRouter.get('/userIds', async (req, res) => {
@@ -226,13 +391,13 @@ adminPanelRouter.delete('/delete', async (req, res) => {
 
     if(adminPanelId) {
         try {
-            const deletedAdminPanelMember = await prisma.adminPanel.delete({
+            const adminMembersInDetails = await prisma.adminPanel.delete({
                 where: {
                     id: adminPanelId
                 }
             })
-            console.log(deletedAdminPanelMember)
-            res.send(deletedAdminPanelMember)
+            console.log(adminMembersInDetails)
+            res.send(adminMembersInDetails)
         } catch (error) {
             console.log("admin panel member could not delete")
             let notificationDescription = "Please check the credentials passed for the deletion."

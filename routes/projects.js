@@ -9,7 +9,7 @@ const prisma = new PrismaClient()
 
 projectRouter.get('/', async (req, res) => {
 
-    let startingProjectIndex = 0
+    let startingItemIndex = 0
     let normalGivingCount = 6
     let searchables = ''
 
@@ -41,14 +41,14 @@ projectRouter.get('/', async (req, res) => {
             if (startingPageNumber < 1) {
                 startingPageNumber = 1
             }
-            startingProjectIndex = (startingPageNumber - 1) * perPageCount
+            startingItemIndex = (startingPageNumber - 1) * perPageCount
             normalGivingCount = perPageCount
         } else {
-            startingProjectIndex = 0
+            startingItemIndex = 0
             normalGivingCount = 6
         }
     } catch {
-        startingProjectIndex = 0
+        startingItemIndex = 0
         normalGivingCount = 6
     } finally {
         try {
@@ -59,15 +59,15 @@ projectRouter.get('/', async (req, res) => {
             } else {
                 if (normalGivingCount >= projectsCount) {
                     normalGivingCount = projectsCount
-                    startingProjectIndex = 0
+                    startingItemIndex = 0
                 } else {
                     if (normalGivingCount < 1) {
                         normalGivingCount = 1
                     }
-                    if ((startingProjectIndex >= projectsCount)) {
-                        startingProjectIndex = projectsCount - 1
-                    } else if (startingProjectIndex < 0) {
-                        startingProjectIndex = 0
+                    if ((startingItemIndex >= projectsCount)) {
+                        startingItemIndex = projectsCount - 1
+                    } else if (startingItemIndex < 0) {
+                        startingItemIndex = 0
                     }
                 }
                 let projects = []
@@ -161,7 +161,7 @@ projectRouter.get('/', async (req, res) => {
 
                     const fieldForSearching = "title"
 
-                    await filterTheItems(startingProjectIndex, normalGivingCount, projectsCount, projects, fieldForSearching, searchables)
+                    await filterTheItems(startingItemIndex, normalGivingCount, projectsCount, projects, fieldForSearching, searchables)
                         .then(response => {
                             res.send({
                                 totalProjectCount: response[1],
