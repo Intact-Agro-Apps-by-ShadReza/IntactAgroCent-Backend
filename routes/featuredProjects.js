@@ -144,7 +144,7 @@ featuredProjectsRouter.put("/update", async (req, res) => {
 	}
 });
 
-featuredProjectsRouter.delete("/delete", async (req, res) => {
+featuredProjectsRouter.post("/delete", async (req, res) => {
 	const { featureProjectId } = req.body;
 	if (featureProjectId) {
 		try {

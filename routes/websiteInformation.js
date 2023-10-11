@@ -148,7 +148,7 @@ websiteInformationRouter.put("/update", async (req, res) => {
 	}
 });
 
-websiteInformationRouter.delete("/delete", async (req, res) => {
+websiteInformationRouter.post("/delete", async (req, res) => {
 	const { webInfoId } = req.body;
 
 	if (webInfoId) {

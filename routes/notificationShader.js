@@ -151,7 +151,7 @@ notificationShaderRouter.put("/update", async (req, res) => {
 	}
 });
 
-notificationShaderRouter.delete("/delete", async (req, res) => {
+notificationShaderRouter.post("/delete", async (req, res) => {
 	const { notificationShaderId } = req.body;
 
 	if (notificationShaderId) {

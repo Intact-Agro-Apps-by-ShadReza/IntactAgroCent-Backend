@@ -160,7 +160,7 @@ referralOfferingsRouter.put("/update", async (req, res) => {
 	}
 });
 
-referralOfferingsRouter.delete("/delete", async (req, res) => {
+referralOfferingsRouter.post("/delete", async (req, res) => {
 	const { referralOfferingId } = req.body;
 
 	if (referralOfferingId) {

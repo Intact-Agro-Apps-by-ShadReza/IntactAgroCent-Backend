@@ -147,7 +147,7 @@ roleRouter.put("/update", async (req, res) => {
 	}
 });
 
-roleRouter.delete("/delete", async (req, res) => {
+roleRouter.post("/delete", async (req, res) => {
 	const { roleId } = req.body;
 
 	if (roleId) {

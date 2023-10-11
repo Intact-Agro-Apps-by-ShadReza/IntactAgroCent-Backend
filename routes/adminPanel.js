@@ -422,9 +422,8 @@ adminPanelRouter.put("/update", async (req, res) => {
 	}
 });
 
-adminPanelRouter.delete("/delete", async (req, res) => {
+adminPanelRouter.post("/delete", async (req, res) => {
 	const { adminPanelId } = req.body;
-
 	if (adminPanelId) {
 		try {
 			const adminMembersInDetails = await prisma.adminPanel.delete({
@@ -432,7 +431,7 @@ adminPanelRouter.delete("/delete", async (req, res) => {
 					id: adminPanelId,
 				},
 			});
-			console.log(adminMembersInDetails);
+			console.log("Member Deleted From Admin", adminMembersInDetails);
 			res.send(adminMembersInDetails);
 		} catch (error) {
 			console.log("admin panel member could not delete");

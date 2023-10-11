@@ -135,7 +135,7 @@ transactionCodesRouter.put("/update", async (req, res) => {
 	}
 });
 
-transactionCodesRouter.delete("/delete", async (req, res) => {
+transactionCodesRouter.post("/delete", async (req, res) => {
 	const { transactionCodeId } = req.body;
 
 	if (transactionCodeId) {

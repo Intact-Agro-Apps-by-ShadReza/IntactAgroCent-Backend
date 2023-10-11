@@ -151,7 +151,7 @@ transactionMessagesRouter.put("/update", async (req, res) => {
 	}
 });
 
-transactionMessagesRouter.delete("/delete", async (req, res) => {
+transactionMessagesRouter.post("/delete", async (req, res) => {
 	const { transactionMessageId } = req.body;
 
 	if (transactionMessageId) {

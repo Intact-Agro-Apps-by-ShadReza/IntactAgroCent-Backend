@@ -101,7 +101,7 @@ withdrawlRequestsRouter.put("/update", async (req, res) => {
 	}
 });
 
-withdrawlRequestsRouter.delete("/delete", async (req, res) => {
+withdrawlRequestsRouter.post("/delete", async (req, res) => {
 	const { withdrawlRequestId } = req.body;
 
 	if (withdrawlRequestId) {

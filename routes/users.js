@@ -191,7 +191,7 @@ usersRouter.put("/update", async (req, res) => {
 	}
 });
 
-usersRouter.delete("/delete", async (req, res) => {
+usersRouter.post("/delete", async (req, res) => {
 	const { userId } = req.body;
 
 	if (userId) {

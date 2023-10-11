@@ -126,7 +126,7 @@ tagRouter.put("/update", async (req, res) => {
 	}
 });
 
-tagRouter.delete("/delete", async (req, res) => {
+tagRouter.post("/delete", async (req, res) => {
 	const { tagId } = req.body;
 
 	if (tagId) {

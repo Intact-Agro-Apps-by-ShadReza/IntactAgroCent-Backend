@@ -63,7 +63,7 @@ imageRouter.post("/create", async (req, res) => {
 	}
 });
 
-imageRouter.delete("/delete", async (req, res) => {
+imageRouter.post("/delete", async (req, res) => {
 	const { imageId } = req.body;
 
 	if (imageId) {

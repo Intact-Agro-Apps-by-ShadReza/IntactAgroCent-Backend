@@ -161,7 +161,7 @@ balanceRouter.put("/update", async (req, res) => {
 	}
 });
 
-balanceRouter.delete("/delete", async (req, res) => {
+balanceRouter.post("/delete", async (req, res) => {
 	const { balanceUserId } = req.body;
 
 	if (balanceUserId) {
