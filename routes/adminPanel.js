@@ -125,6 +125,58 @@ adminPanelRouter.get("/", async (req, res) => {
 	}
 });
 
+adminPanelRouter.get("/user-mail", async (req, res) => {
+	try {
+		const { adminMembersIds } = req.query;
+		if (adminMembersIds) {
+			const adminMembersIdsString = Array.isArray(adminMembersIds)
+				? adminMembersIds.join(",")
+				: adminMembersIds;
+
+			// @ts-ignore
+			const parsedAdminMembersIds = JSON.parse(adminMembersIdsString);
+			// @ts-ignore
+
+			if (!Array.isArray(parsedAdminMembersIds)) {
+				console.log("Invalid admin members ids parameter.");
+				let notificationDescription = "Invalid admin members ids parameter.";
+				return res.status(500).end(notificationDescription);
+			}
+
+			try {
+				const adminMemberInDetailsMail = await prisma.registeredMail.findFirst({
+					where: {
+						id: {
+							in: parsedAdminMembersIds,
+						},
+					},
+				});
+				if (adminMemberInDetailsMail) {
+					res.send(adminMemberInDetailsMail.email);
+				} else {
+					let notificationDescription =
+						"Invalid Member Id. No such email found for the member.";
+					return res.status(404).end(notificationDescription);
+				}
+			} catch (error) {
+				console.log("admin panel member could not delete");
+				let notificationDescription =
+					"Please check the credentials passed for the deletion.";
+				return res.status(500).end(notificationDescription);
+			}
+		} else {
+			console.log("admin panel member invalid params");
+			let notificationDescription =
+				"Please provide correct id for the request.";
+			return res.status(400).end(notificationDescription);
+		}
+	} catch (error) {
+		console.log("admin panel member invalid params");
+		let notificationDescription = "Please provide correct id for the request.";
+		return res.status(400).end(notificationDescription);
+	}
+});
+
 adminPanelRouter.get("/details", async (req, res) => {
 	try {
 		const { adminMembersIds, rolesIds } = req.query;
