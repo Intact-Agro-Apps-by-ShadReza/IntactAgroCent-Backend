@@ -47,7 +47,7 @@ currencyRouter.get("/", async (req, res) => {
 								res.set({
 									notificationTitle: "Network Error",
 									notificationDescription:
-										"There was a problem talking with the external server.",
+										"Please check if your connection is stable. Please try again within some time.",
 								});
 								return res.status(500).end();
 							}
@@ -57,7 +57,7 @@ currencyRouter.get("/", async (req, res) => {
 							res.set({
 								notificationTitle: "Network Error",
 								notificationDescription:
-									"There was a problem talking with the external server.",
+									"Please check if your connection is stable. Please try again within some time.",
 							});
 							return res.status(500).end();
 						});
@@ -66,7 +66,7 @@ currencyRouter.get("/", async (req, res) => {
 					res.set({
 						notificationTitle: "Network Error",
 						notificationDescription:
-							"There was a problem talking with the external server.",
+							"Please check if your connection is stable. Please try again within some time.",
 					});
 					return res.status(500).end();
 				}
@@ -101,7 +101,7 @@ currencyRouter.get("/", async (req, res) => {
 					res.set({
 						notificationTitle: "Network Error",
 						notificationDescription:
-							"There was a problem talking with the external server.",
+							"Please check if your connection is stable. Please try again within some time.",
 					});
 					return res.status(500).end();
 				}
@@ -110,7 +110,7 @@ currencyRouter.get("/", async (req, res) => {
 				res.set({
 					notificationTitle: "Network Error",
 					notificationDescription:
-						"There was a problem talking with the external server.",
+						"Please check if your connection is stable. Please try again within some time.",
 				});
 				return res.status(500).end();
 			}
@@ -120,7 +120,7 @@ currencyRouter.get("/", async (req, res) => {
 		res.set({
 			notificationTitle: "Network Error",
 			notificationDescription:
-				"There was a problem talking with the server. Please try again later.",
+				"Please check if your connection is stable. Please try again within some time.",
 		});
 		return res.status(500).end();
 	}

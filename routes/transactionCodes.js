@@ -12,7 +12,7 @@ transactionCodesRouter.get("/", async (req, res) => {
 	} catch (error) {
 		console.log(error.message);
 		let notificationDescription =
-			"There were some issues connecting with the server. Please try again after sometimes.";
+			"Please try again after sometimes. There seems to be some issue with the network connection.";
 		return res.status(500).end(notificationDescription);
 	}
 });
@@ -125,7 +125,7 @@ transactionCodesRouter.put("/update", async (req, res) => {
 		} catch (error) {
 			console.log("transaction code remains the same");
 			let notificationDescription =
-				"Please try again after sometimes. There seems to be some issue with the network connection.";
+				"Please check if your connection is stable. Please try again within some time.";
 			return res.status(500).end(notificationDescription);
 		}
 	} else {

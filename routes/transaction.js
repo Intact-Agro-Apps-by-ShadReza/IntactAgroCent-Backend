@@ -12,7 +12,7 @@ transactionRouter.get("/", async (req, res) => {
 	} catch (error) {
 		console.log(error.message);
 		let notificationDescription =
-			"There were some issues connecting with the server. Please try again after sometimes.";
+			"Please try again after sometimes. There seems to be some issue with the network connection.";
 		return res.status(500).end(notificationDescription);
 	}
 });
@@ -71,7 +71,7 @@ transactionRouter.post("/create", async (req, res) => {
 		} catch (error) {
 			console.log("transaction" + error.message);
 			let notificationDescription =
-				"transaction could not be created. Please try again after some times.";
+				"Transaction could not be created. Please try again after sometimes. There seems to be some issue with the network connection.";
 			return res.status(500).end(notificationDescription);
 		}
 	} else {
@@ -121,7 +121,7 @@ transactionRouter.put("/update", async (req, res) => {
 				} else {
 					console.log("transaction could not be updated");
 					let notificationDescription =
-						"Please try again after sometimes. transaction was not updated.";
+						"Please try again after sometimes. There seems to be some issue with the network connection.Transaction was not updated.";
 					return res.status(500).end(notificationDescription);
 				}
 			} else {

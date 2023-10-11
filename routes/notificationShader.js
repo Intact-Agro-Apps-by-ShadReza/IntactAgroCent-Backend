@@ -12,7 +12,7 @@ notificationShaderRouter.get("/", async (req, res) => {
 	} catch (error) {
 		console.log(error.message);
 		let notificationDescription =
-			"There were some issues connecting with the server. Please try again after sometimes.";
+			"Please check if your connection is stable. Please try again within some time.";
 		return res.status(500).end(notificationDescription);
 	}
 });

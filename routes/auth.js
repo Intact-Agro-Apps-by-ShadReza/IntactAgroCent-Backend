@@ -166,10 +166,13 @@ authRouter.post("/forgotPassword", async (req, res) => {
 		}
 	} catch (error) {
 		console.log("Forgot Password Error");
-		res.statusMessage = "Network Issue. Please Try Again sometimes later.";
+		res.statusMessage =
+			"Please check if your connection is stable. Please try again within some time.";
 		return res
 			.status(500)
-			.end("Network Issue. Please Try Again sometimes later.");
+			.end(
+				"Please check if your connection is stable. Please try again within some time."
+			);
 	}
 });
 
@@ -240,10 +243,13 @@ authRouter.post("/login", async (req, res) => {
 		}
 	} catch (error) {
 		console.log("Login Error");
-		res.statusMessage = "Network Issue. Please Try Again sometimes later.";
+		res.statusMessage =
+			"Please check if your connection is stable. Please try again within some time.";
 		return res
 			.status(500)
-			.end("Network Issue. Please Try Again sometimes later.");
+			.end(
+				"Please check if your connection is stable. Please try again within some time."
+			);
 	}
 });
 
@@ -386,10 +392,13 @@ authRouter.post("/resendVerificationCode", async (req, res) => {
 		}
 	} catch (error) {
 		console.log("Error", error.message);
-		res.statusMessage = "There were some issues. Please try again later";
+		res.statusMessage =
+			"Please check if your connection is stable. Please try again within some time.";
 		return res
 			.status(409)
-			.end("There were some issues. Please try again later");
+			.end(
+				"Please check if your connection is stable. Please try again within some time."
+			);
 	}
 });
 
@@ -563,10 +572,10 @@ authRouter.post("/verifyPasswordReset", async (req, res) => {
 		}
 	} catch (error) {
 		console.log("Error", error.message);
-		res.statusMessage = "There were some issues. Please try again later";
+		res.statusMessage = "Please check if your connection is stable. Please try again within some time.";
 		return res
 			.status(409)
-			.end("There were some issues. Please try again later");
+			.end("Please check if your connection is stable. Please try again within some time.");
 	}
 });
 
@@ -807,10 +816,10 @@ authRouter.post("/register", async (req, res) => {
 		}
 	} catch (error) {
 		console.log("Error", error.message);
-		res.statusMessage = "There were some issues. Please try again later";
+		res.statusMessage = "Please check if your connection is stable. Please try again within some time.";
 		return res
 			.status(409)
-			.end("There were some issues. Please try again later");
+			.end("Please check if your connection is stable. Please try again within some time.");
 	}
 });
 

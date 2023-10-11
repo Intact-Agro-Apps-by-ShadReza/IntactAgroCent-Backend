@@ -12,7 +12,7 @@ transactionMessagesRouter.get("/", async (req, res) => {
 	} catch (error) {
 		console.log(error.message);
 		let notificationDescription =
-			"There were some issues connecting with the server. Please try again after sometimes.";
+			"Please try again after sometimes. There seems to be some issue with the network connection.";
 		return res.status(500).end(notificationDescription);
 	}
 });
