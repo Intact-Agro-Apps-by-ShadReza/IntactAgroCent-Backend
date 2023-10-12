@@ -20,6 +20,8 @@ const transactionRouter = require("./routes/transaction.js");
 const balanceRouter = require("./routes/balance.js");
 const paymentRouter = require("./routes/payment.js");
 const websiteInformationRouter = require("./routes/websiteInformation.js");
+const mailVerificationsRouter = require("./routes/mailVerifications.js");
+const registeredMailsRouter = require("./routes/registeredMails.js");
 
 dotenv.config();
 
@@ -33,24 +35,26 @@ app.use(
 	})
 );
 
-app.use("/users", userRouter);
-app.use("/auth", authRouter);
-app.use("/projects", projectRouter);
-app.use("/images", imageRouter);
-app.use("/currencies", currencyRouter);
-app.use("/tags", tagRouter);
-app.use("/featured-projects", featuredProjectsRouter);
-app.use("/roles", roleRouter);
-app.use("/transaction-codes", transactionCodesRouter);
 app.use("/admin-panel", adminPanelRouter);
-app.use("/notification-shaders", notificationShaderRouter);
-app.use("/transaction-messages", transactionMessagesRouter);
-app.use("/withdrawl-requests", withdrawlRequestsRouter);
-app.use("/referral-offerings", referralOfferingsRouter);
-app.use("/transactions", transactionRouter);
+app.use("/auth", authRouter);
 app.use("/balances", balanceRouter);
+app.use("/currencies", currencyRouter);
+app.use("/featured-projects", featuredProjectsRouter);
+app.use("/images", imageRouter);
+app.use("/mail-verifications", mailVerificationsRouter);
+app.use("/notification-shaders", notificationShaderRouter);
 app.use("/payment", paymentRouter);
+app.use("/projects", projectRouter);
+app.use("/referral-offerings", referralOfferingsRouter);
+app.use("/registered-mails", registeredMailsRouter);
+app.use("/roles", roleRouter);
+app.use("/tags", tagRouter);
+app.use("/transactions", transactionRouter);
+app.use("/transaction-codes", transactionCodesRouter);
+app.use("/transaction-messages", transactionMessagesRouter);
+app.use("/users", userRouter);
 app.use("/website-information", websiteInformationRouter);
+app.use("/withdrawl-requests", withdrawlRequestsRouter);
 
 app.get("/", (req, res) => {
 	res.send("Assalamu Alaikum from dev Shad Reza.");
