@@ -90,6 +90,18 @@ adminPanelRouter.get("/", async (req, res) => {
 								creationTime: "desc",
 							},
 						});
+					} else if (filter === "sort-by-updated-asc") {
+						adminPanels = await prisma.adminPanel.findMany({
+							orderBy: {
+								updationTime: "asc",
+							},
+						});
+					} else if (filter === "sort-by-updated-desc") {
+						adminPanels = await prisma.adminPanel.findMany({
+							orderBy: {
+								updationTime: "desc",
+							},
+						});
 					} else {
 						adminPanels = await prisma.adminPanel.findMany();
 					}
