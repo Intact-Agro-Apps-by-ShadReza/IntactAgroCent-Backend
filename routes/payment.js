@@ -9,7 +9,7 @@ const is_live =
 	process.env.SSLCOMMERZ_ACCOUNT_LIVENESS === "true" ? true : false;
 const backend_action_base_url = "http://localhost:3000/payment";
 
-paymentRouter.get("/", async (req, res) => {
+paymentRouter.post("/", async (req, res) => {
 	try {
 		const {
 			total_amount,
@@ -71,7 +71,9 @@ paymentRouter.get("/", async (req, res) => {
 		sslcz.init(data).then((apiResponse) => {
 			// Redirect the user to payment gateway
 			let GatewayPageURL = apiResponse.GatewayPageURL;
-			res.redirect(GatewayPageURL);
+			res.send({
+				url: GatewayPageURL,
+			});
 		});
 	} catch {}
 });

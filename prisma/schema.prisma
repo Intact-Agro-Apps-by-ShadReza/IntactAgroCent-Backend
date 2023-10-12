@@ -10,11 +10,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model RegisteredMail {
+model AdminPanel {
+  id           String    @id @unique @default(uuid())
+  creationTime DateTime
+  updationTime DateTime?
+  userId       String
+  roleId       String
+}
+
+model Balance {
+  id                           String    @id @unique @default(uuid())
+  userId                       String    @unique
+  investedMoneyInBDT           Float
+  withdrawedMoneyInBDT         Float
+  returnOnInvestmentMoneyInBDT Float
+  referredMoneyInBDT           Float
+  extraMoneyInBDT              Float
+  balanceInBDT                 Float
+  creationTime                 DateTime
+  updationTime                 DateTime?
+}
+
+model Currency {
+  id                      String   @id @unique @default(uuid())
+  creationTime            DateTime
+  baseTime                DateTime
+  expirationTimeInMinutes Int
+  expiredAt               DateTime
+  baseCurrency            String
+  convertionRates         Json
+}
+
+model FeaturedProjects {
+  id                    String    @id @unique @default(uuid())
+  creationTime          DateTime
+  updationTime          DateTime?
+  featuredProjectsCount Int
+  projectsIdList        String[]
+}
+
+model Image {
   id            String   @id @unique @default(uuid())
-  email         String   @unique
-  password      String
-  emailVerified Boolean
+  liveLink      String
+  applicableFor String
   creationTime  DateTime
 }
 
@@ -25,6 +63,26 @@ model MailVerificationCode {
   expiredAt               DateTime
   emailId                 String   @unique
   creationTime            DateTime
+}
+
+model NotificationShader {
+  id               String    @id @unique @default(uuid())
+  creationTime     DateTime
+  updationTime     DateTime?
+  initiatedById    String
+  initiatedForType String
+  initiatedForId   String?
+  message          String
+}
+
+
+
+model RegisteredMail {
+  id            String   @id @unique @default(uuid())
+  email         String   @unique
+  password      String
+  emailVerified Boolean
+  creationTime  DateTime
 }
 
 model Project {
@@ -44,13 +102,6 @@ model Project {
   creationTime                         DateTime
 }
 
-model Image {
-  id            String   @id @unique @default(uuid())
-  liveLink      String
-  applicableFor String
-  creationTime  DateTime
-}
-
 model Tag {
   id            String    @id @unique @default(uuid())
   title         String
@@ -58,16 +109,6 @@ model Tag {
   applicableFor String
   creationTime  DateTime
   updationTime  DateTime?
-}
-
-model Currency {
-  id                      String   @id @unique @default(uuid())
-  creationTime            DateTime
-  baseTime                DateTime
-  expirationTimeInMinutes Int
-  expiredAt               DateTime
-  baseCurrency            String
-  convertionRates         Json
 }
 
 model User {
@@ -85,14 +126,6 @@ model User {
   address             String
   country             String
   dateOfBirth         DateTime
-}
-
-model FeaturedProjects {
-  id                    String    @id @unique @default(uuid())
-  creationTime          DateTime
-  updationTime          DateTime?
-  featuredProjectsCount Int
-  projectsIdList        String[]
 }
 
 model TransactionCodes {
@@ -134,24 +167,6 @@ model Role {
   roleName     String
 }
 
-model AdminPanel {
-  id           String    @id @unique @default(uuid())
-  creationTime DateTime
-  updationTime DateTime?
-  userId       String
-  roleId       String
-}
-
-model NotificationShader {
-  id               String    @id @unique @default(uuid())
-  creationTime     DateTime
-  updationTime     DateTime?
-  initiatedById    String
-  initiatedForType String
-  initiatedForId   String?
-  message          String
-}
-
 model WithdrawlRequest {
   id              String    @id @unique @default(uuid())
   processedTime   DateTime
@@ -170,19 +185,6 @@ model TransactionMessage {
   description       String
   transactionFromId String
   transactionToId   String
-}
-
-model Balance {
-  id                           String    @id @unique @default(uuid())
-  userId                       String    @unique
-  investedMoneyInBDT           Float
-  withdrawedMoneyInBDT         Float
-  returnOnInvestmentMoneyInBDT Float
-  referredMoneyInBDT           Float
-  extraMoneyInBDT              Float
-  balanceInBDT                 Float
-  creationTime                 DateTime
-  updationTime                 DateTime?
 }
 
 model WebsiteInformation {
