@@ -129,26 +129,10 @@ adminPanelRouter.get("/user-mail", async (req, res) => {
 	try {
 		const { adminMembersIds } = req.query;
 		if (adminMembersIds) {
-			const adminMembersIdsString = Array.isArray(adminMembersIds)
-				? adminMembersIds.join(",")
-				: adminMembersIds;
-
-			// @ts-ignore
-			const parsedAdminMembersIds = JSON.parse(adminMembersIdsString);
-			// @ts-ignore
-
-			if (!Array.isArray(parsedAdminMembersIds)) {
-				console.log("Invalid admin members ids parameter.");
-				let notificationDescription = "Invalid admin members ids parameter.";
-				return res.status(500).end(notificationDescription);
-			}
-
 			try {
 				const adminMemberInDetailsMail = await prisma.registeredMail.findFirst({
 					where: {
-						id: {
-							in: parsedAdminMembersIds,
-						},
+						id: adminMembersIds.toString(),
 					},
 				});
 				if (adminMemberInDetailsMail) {
@@ -436,9 +420,15 @@ adminPanelRouter.put("/update", async (req, res) => {
 				return res.status(403).end(notificationDescription);
 			} else {
 				try {
+					const member = await prisma.adminPanel.findFirst({
+						where: {
+							userId: newAdminPanel.userId,
+						},
+					});
+					const memberId = member ? member.id : "";
 					const updatedAdminPanel = await prisma.adminPanel.update({
 						where: {
-							id: adminPanelId,
+							id: memberId,
 						},
 						data: {
 							roleId: newAdminPanel.roleId,
