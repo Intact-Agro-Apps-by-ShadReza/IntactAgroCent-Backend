@@ -264,36 +264,6 @@ adminPanelRouter.get("/userIds", async (req, res) => {
 	}
 });
 
-adminPanelRouter.get("/roleIds", async (req, res) => {
-	try {
-		const roles = await prisma.role.findMany({
-			where: {
-				roleName: "admin",
-			},
-		});
-		const roleIds = roles.map((roleId) => {
-			const newRole = {
-				id: roleId.id,
-				roleName: roleId.roleName,
-			};
-			return newRole;
-		});
-
-		if (roleIds && roleIds.length) {
-			res.send(roleIds);
-		} else {
-			let notificationDescription =
-				"No Role Ids Found! Admin Attention required.";
-			res.status(404).end(notificationDescription);
-		}
-	} catch (error) {
-		console.log(error.message);
-		let notificationDescription =
-			"There were some issues connecting with the server. Please try again after sometimes.";
-		return res.status(500).end(notificationDescription);
-	}
-});
-
 adminPanelRouter.get("/verify/:userId", async (req, res) => {
 	const userId = req.params.userId;
 	try {
