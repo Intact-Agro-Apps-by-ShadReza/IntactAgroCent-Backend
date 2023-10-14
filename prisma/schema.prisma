@@ -75,16 +75,6 @@ model NotificationShader {
   message          String
 }
 
-
-
-model RegisteredMail {
-  id            String   @id @unique @default(uuid())
-  email         String   @unique
-  password      String
-  emailVerified Boolean
-  creationTime  DateTime
-}
-
 model Project {
   id                                   String    @id @unique @default(uuid())
   title                                String
@@ -102,6 +92,43 @@ model Project {
   creationTime                         DateTime
 }
 
+model ReferralOfferings {
+  id                String    @id @unique @default(uuid())
+  creationTime      DateTime
+  updationTime      DateTime?
+  referralFromId    String
+  referralName      String
+  rewardType        String
+  rewardAmount      Float
+  rewardDescription String
+}
+
+model RegisteredMail {
+  id            String   @id @unique @default(uuid())
+  email         String   @unique
+  password      String
+  emailVerified Boolean
+  creationTime  DateTime
+}
+
+model Role {
+  id           String    @id @unique @default(uuid())
+  creationTime DateTime
+  updationTime DateTime?
+  roleName     String
+}
+
+model StoreBalance {
+  id                             String    @id @unique @default(uuid())
+  creationTime                   DateTime
+  updationTime                   DateTime?
+  moneyInBdtInlet                Float
+  moneyInBdtOutlet               Float
+  moneyInBdtForWithdrawls        Float
+  moneyInBdtForPendingWithdrawls Float
+  moneyInBdtForReferrals         Float
+}
+
 model Tag {
   id            String    @id @unique @default(uuid())
   title         String
@@ -109,6 +136,37 @@ model Tag {
   applicableFor String
   creationTime  DateTime
   updationTime  DateTime?
+}
+
+model Transaction {
+  id                String    @id @unique @default(uuid())
+  creationTime      DateTime
+  transactionFromId String
+  transactionToId   String
+  transactionAmount Float
+  transactionStatus String
+  trxId             String    @unique
+  trxCodeId         String
+  updationTime      DateTime?
+}
+
+model TransactionCodes {
+  id           String    @id @unique @default(uuid())
+  creationTime DateTime
+  updationTime DateTime?
+  trxCode      String
+  trxName      String
+  createdById  String
+}
+
+model TransactionMessage {
+  id                String    @id @unique @default(uuid())
+  sendingTime       DateTime
+  updationTime      DateTime?
+  title             String
+  description       String
+  transactionFromId String
+  transactionToId   String
 }
 
 model User {
@@ -128,43 +186,15 @@ model User {
   dateOfBirth         DateTime
 }
 
-model TransactionCodes {
-  id           String    @id @unique @default(uuid())
-  creationTime DateTime
-  updationTime DateTime?
-  trxCode      String
-  trxName      String
-  createdById  String
-}
-
-model Transaction {
-  id                String    @id @unique @default(uuid())
-  creationTime      DateTime
-  transactionFromId String
-  transactionToId   String
-  transactionAmount Float
-  transactionStatus String
-  trxId             String    @unique
-  trxCodeId         String
-  updationTime      DateTime?
-}
-
-model ReferralOfferings {
-  id                String    @id @unique @default(uuid())
-  creationTime      DateTime
-  updationTime      DateTime?
-  referralFromId    String
-  referralName      String
-  rewardType        String
-  rewardAmount      Float
-  rewardDescription String
-}
-
-model Role {
-  id           String    @id @unique @default(uuid())
-  creationTime DateTime
-  updationTime DateTime?
-  roleName     String
+model WebsiteInformation {
+  id                    String    @id @unique @default(uuid())
+  websiteName           String
+  bigLogoLink           String
+  smallLogoLink         String
+  privacyPolicyLink     String
+  termsAndConditionLink String
+  creationTime          DateTime
+  updationTime          DateTime?
 }
 
 model WithdrawlRequest {
@@ -175,25 +205,5 @@ model WithdrawlRequest {
   withdrawlAmount Float
   status          String
   processedById   String
-}
-
-model TransactionMessage {
-  id                String    @id @unique @default(uuid())
-  sendingTime       DateTime
-  updationTime      DateTime?
-  title             String
-  description       String
-  transactionFromId String
-  transactionToId   String
-}
-
-model WebsiteInformation {
-  id                    String    @id @unique @default(uuid())
-  websiteName           String
-  bigLogoLink           String
-  smallLogoLink         String
-  privacyPolicyLink     String
-  termsAndConditionLink String
-  creationTime          DateTime
-  updationTime          DateTime?
+  withdrawlStatus String
 }

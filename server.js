@@ -22,6 +22,7 @@ const paymentRouter = require("./routes/payment.js");
 const websiteInformationRouter = require("./routes/websiteInformation.js");
 const mailVerificationsRouter = require("./routes/mailVerifications.js");
 const registeredMailsRouter = require("./routes/registeredMails.js");
+const storeBalanceRouter = require("./routes/storeBalance.js");
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use("/projects", projectRouter);
 app.use("/referral-offerings", referralOfferingsRouter);
 app.use("/registered-mails", registeredMailsRouter);
 app.use("/roles", roleRouter);
+app.use("/store-balance", storeBalanceRouter);
 app.use("/tags", tagRouter);
 app.use("/transactions", transactionRouter);
 app.use("/transaction-codes", transactionCodesRouter);

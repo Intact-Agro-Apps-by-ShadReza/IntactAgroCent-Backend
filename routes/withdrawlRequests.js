@@ -28,6 +28,7 @@ withdrawlRequestsRouter.post("/create", async (req, res) => {
 					withdrawlAmount: withdrawlAmount,
 					status: status,
 					processedById: processedById,
+					withdrawlStatus: "pending",
 					processedTime: new Date(),
 					updationTime: new Date(),
 				},
@@ -61,10 +62,12 @@ withdrawlRequestsRouter.put("/update", async (req, res) => {
 
 	if (
 		withdrawlRequestId &&
+		newWithdrawlRequest &&
 		newWithdrawlRequest.initiatedById &&
 		newWithdrawlRequest.withdrawlAmount &&
 		newWithdrawlRequest.status &&
-		newWithdrawlRequest.processedById
+		newWithdrawlRequest.processedById &&
+		newWithdrawlRequest.withdrawlStatus
 	) {
 		try {
 			const updatedWithdrawlRequest = await prisma.withdrawlRequest.update({
@@ -76,6 +79,7 @@ withdrawlRequestsRouter.put("/update", async (req, res) => {
 					withdrawlAmount: newWithdrawlRequest.withdrawlAmount,
 					status: newWithdrawlRequest.status,
 					processedById: newWithdrawlRequest.processedById,
+					withdrawlStatus: newWithdrawlRequest.withdrawlStatus,
 					updationTime: new Date(),
 				},
 			});
